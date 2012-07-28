@@ -136,8 +136,8 @@
             }
             server.send(sent, socket);
         }
-            }
+            };
         
-    };
+    
 
 

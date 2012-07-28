@@ -20,11 +20,10 @@ function start() {
         socket.on('connect', function(socket){
             worker.handle('connection', socket);
         });
-        module.exports = {
-            send: function(message, socket) {
+        
+            function send(message, socket) {
                 sockets[socket].write(message);
             }
-        };
         
         socket.on('end', function() {
             var i = sockets.indexOf(socket);

@@ -38,8 +38,8 @@ function start() {
         items = data;
         console.log('User numbers loaded!');        
     });
-    module.exports = {
-        handle: function(command, socket) {
+    
+        function handle(command, socket) {
             if (command === 'look') {
                     sent = items;
             }
@@ -137,7 +137,6 @@ function start() {
             }
         
     }
-    };
 
     }
 

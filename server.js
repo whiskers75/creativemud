@@ -14,7 +14,6 @@
         sockets.push(socket);
         
         socket.on('data', function(data){
-            console.log(socket);
             worker.handle(data, socket);
         });
         

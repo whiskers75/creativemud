@@ -14,6 +14,7 @@
         sockets.push(socket);
         
         socket.on('data', function(data){
+            console.log('Data in server, sending to handle()');
             worker.handle(data, socket);
         });
         

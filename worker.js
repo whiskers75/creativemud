@@ -1,6 +1,6 @@
 // CreativeMUD worker
 
-function start() {
+
     
     var server = require('./server');
     var sent;
@@ -9,7 +9,7 @@ function start() {
     var waitingFor;
     var tba = [];
     var waiting;
-    var length;
+    var len;
     var users = [];
     var user = [];
     var unums = [];
@@ -125,9 +125,9 @@ function start() {
                                     waitingType = 'null';
                                 }
                                 if (waitingType === 'register') {
-                                    length = length + 1;
-                                    users[length] = command;
-                                    unums[length] = socket;
+                                    len = len + 1;
+                                    users[len] = command;
+                                    unums[len] = socket;
                             }
                     }
                 }
@@ -138,6 +138,4 @@ function start() {
         
     };
 
-    }
 
-start();

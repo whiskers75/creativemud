@@ -41,6 +41,7 @@
     
         exports.handle = function handle(command, socket) {
             console.log('Data sent to handle()');
+            console.log(command);
             if (command === 'look') {
                      server.send(items, socket);
                     console.log('Look command interpreted.');

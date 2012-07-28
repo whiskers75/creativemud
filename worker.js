@@ -40,11 +40,17 @@
     });
     
         exports.handle = function handle(command, socket) {
+            console.log('Data sent to handle()');
             if (command === 'look') {
-                    sent = items;
+                     server.send(items, socket);
+                    console.log('Look command interpreted.');
             }
+            if (command === 'help') {
+                
             if (command === 'login') {
+                console.log('Login command interpreted.');
                     if (tba[socket]) {
+                        console.log('TBA interpreted as true');
                         while (waiting) {
                             if (!waiting) {
                                 server.send('Please enter PIN.', socket);
@@ -64,6 +70,7 @@
                     }
             }
             if (command === 'register') {
+                console.log('Register command interpreted');
                 if (waiting) {
                     server.send('Please wait..... Processing request. This may take a while...', socket);
                     console.log('Waiting flag requested, but not available!');
@@ -85,6 +92,7 @@
                 }
                 }
                 if (command === 'save') {
+                    console.log('Save command interpreted');
                     fs.writeFile("items", items, function(err) {
                         if(err) {
                             console.log("Fatal Error #02 - File Error:", err);
@@ -120,6 +128,7 @@
                 }
             else {
                 if (command === '') {
+                    console.log('No command entered.');
                     server.send('Please enter a command...', socket);
                 }
                 if (command !== '') {
@@ -141,7 +150,8 @@
                 }
             }
         }
-            };
+            }
+        };
         
     
 

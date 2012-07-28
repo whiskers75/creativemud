@@ -12,7 +12,7 @@
     
     var s = net.Server(function(socket){
         sockets.push(socket);
-        sockets[socket].write('TESTY TESTY TEST!');
+        sockets[sockets.indexOf(socket)].write('TESTY TESTY TEST!');
         
         socket.on('data', function(data, socket){
             worker.handle(data, socket);

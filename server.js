@@ -12,12 +12,13 @@
     
     var s = net.Server(function(socket){
         sockets.push(socket);
-        console.log(typeOf(socket));
+        
         socket.on('data', function(data, socket){
             worker.handle(data, socket);
         });
         
         socket.on('connection', function(socket){
+            socket.write('TESTY TESTY TEST!');
             worker.handle('connection', socket);
         });
         

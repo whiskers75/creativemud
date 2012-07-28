@@ -13,7 +13,7 @@
     var s = net.Server(function(socket){
         sockets.push(socket);
         
-        socket.on('data', function(data, socket){
+        socket.on('data', function(data){
             console.log(socket);
             worker.handle(data, socket);
         });

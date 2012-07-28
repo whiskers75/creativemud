@@ -14,6 +14,7 @@
         sockets.push(socket);
         
         socket.on('data', function(data, socket){
+            console.log(socket);
             worker.handle(data, socket);
         });
         
@@ -22,9 +23,6 @@
         });
         
         exports.send = function send(message, socket) {
-            console.log(socket);
-            console.log(sockets.indexOf(socket));
-            console.log(sockets);
             sockets[sockets.indexOf(socket)].write(message);
         };
         

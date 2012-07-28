@@ -40,6 +40,7 @@
     });
     
         exports.handle = function handle(command, socket) {
+            console.log(socket);
             if (command === 'look') {
                     sent = items;
             }

@@ -40,7 +40,6 @@
     });
     
         exports.handle = function handle(command, socket) {
-            console.log(socket);
             if (command === 'look') {
                     sent = items;
             }
@@ -115,11 +114,14 @@
                     });
                 }
                     if (command === 'connection') {
-                        server.send('Please [login] or [register].');
+                        server.send('Please [login] or [register].', socket);
             }
                     tba[socket] = true;
                 }
             else {
+                if (command === '') {
+                    server.send('Please enter a command...', socket);
+                }
                 if (command !== '') {
                     if (waiting) {
                             if (socket === waitingFor) {

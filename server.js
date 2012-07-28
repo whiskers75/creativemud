@@ -12,18 +12,17 @@
     
     var s = net.Server(function(socket){
         sockets.push(socket);
-        sockets[sockets.indexOf(socket)].write('TESTY TESTY TEST!');
         
         socket.on('data', function(data, socket){
-            worker.handle(data, socket);
+            worker.handle(data, sockets.indexOf(socket));
         });
         
         socket.on('connection', function(socket){
             worker.handle('connection', socket);
         });
         
-        exports.send = function send(message, socketWrite) {
-            socketWrite.write(message);
+        exports.send = function send(message, socketindex) {
+            sockets[socketindex].write(message);
         };
         
         socket.on('end', function() {

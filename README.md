@@ -1,4 +1,4 @@
 CreativeMUD
 -----------
 
-Run exec.js to start.
+Run server.js to start.

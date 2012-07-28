@@ -4,7 +4,7 @@
 function start() {
     
     var net = require('net');
-    var worker = require(worker.js);
+    var worker = require('./worker');
     var sockets;
     var listenerport;
     
@@ -18,12 +18,13 @@ function start() {
         });
         
         socket.on('connect', function(socket){
-            worker.login(socket);
+            worker.handle('connection', socket);
         });
-        
-        function send(message, socket) {
-            sockets[socket].write(message);
-        }
+        module.exports = {
+            send: function(message, socket) {
+                sockets[socket].write(message);
+            }
+        };
         
         socket.on('end', function() {
             var i = sockets.indexOf(socket);
@@ -34,3 +35,5 @@ function start() {
     s.listen(listenerport);
     console.log("Listening on port: " + listenerport);
 }
+
+start();

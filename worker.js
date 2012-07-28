@@ -2,7 +2,7 @@
 
 function start() {
     
-    var server = require(server.js);
+    var server = require('./server');
     var sent;
     var items;
     var waitingType;
@@ -12,6 +12,7 @@ function start() {
     var length;
     var users;
     var user;
+    var unums;
     var fs = require("fs");
     fs.readFile('items', 'ascii', function(err, data) {
         if(err){
@@ -21,14 +22,38 @@ function start() {
         items = data;
         console.log('Items loaded!');        
     });
-    
-    function handle(command, socket) {
-        if (command === 'look') {
-                sent = items;
+    fs.readFile('users', 'ascii', function(err, data) {
+        if(err){
+            console.log('Fatal Error #01 - File error:', err);
+            process.exit(1);
         }
-        if (command === 'login') {
-                if (tba[socket]) {
-                    while (waiting) {
+        users = data;
+        console.log('Users loaded!');        
+    });   
+    fs.readFile('unums', 'ascii', function(err, data) {
+        if(err){
+            console.log('Fatal Error #01 - File error:', err);
+            process.exit(1);
+        }
+        items = data;
+        console.log('User numbers loaded!');        
+    });
+    module.exports = {
+        handle: function(command, socket) {
+            if (command === 'look') {
+                    sent = items;
+            }
+            if (command === 'login') {
+                    if (tba[socket]) {
+                        while (waiting) {
+                            if (!waiting) {
+                                server.send('Please enter PIN.', socket);
+                                console.log('Setting waiting flag...');
+                                waiting = true;
+                                waitingFor = socket;
+                                waitingType = 'login';
+                            }
+                        }
                         if (!waiting) {
                             server.send('Please enter PIN.', socket);
                             console.log('Setting waiting flag...');
@@ -37,59 +62,83 @@ function start() {
                             waitingType = 'login';
                         }
                     }
+            }
+            if (command === 'register') {
+                if (waiting) {
+                    server.send('Please wait..... Processing request. This may take a while...', socket);
+                    console.log('Waiting flag requested, but not available!');
+                while (waiting) {
                     if (!waiting) {
-                        server.send('Please enter PIN.', socket);
                         console.log('Setting waiting flag...');
+                        server.send('Please enter desired PIN.', socket);
                         waiting = true;
                         waitingFor = socket;
-                        waitingType = 'login';
-                    }
+                        waitingType = 'register';
                 }
-        }
-        if (command === 'register') {
-            if (waiting) {
-                server.send('Please wait..... Processing request. This may take a while...', socket);
-                console.log('Waiting flag requested, but not available!');
-            while (waiting) {
                 if (!waiting) {
                     console.log('Setting waiting flag...');
+                    server.send('Please enter desired PIN.', socket);
                     waiting = true;
                     waitingFor = socket;
                     waitingType = 'register';
-            }
-            server.send('Please enter desired PIN.', socket);
-            if (!waiting) {
-                console.log('Setting waiting flag...');
-                waiting = true;
-                waitingFor = socket;
-                waitingType = 'register';
-            }
-            }
-            }
-        else {
-            if (command !== '') {
-                if (waiting) {
-                        if (socket === waitingFor) {
-                            if (waitingType === 'login') {
-                                user = command;
-                                waiting = false;
-                                console.log('Unsetting waiting flag...');
-                                waitingFor = -1;
-                                waitingType = 'null';
-                            }
-                            if (waitingType === 'register') {
-                                length = length + 1;
-                                users[length] = command;
+                }
+                }
+                }
+                if (command === 'save') {
+                    fs.writeFile("items", items, function(err) {
+                        if(err) {
+                            console.log("Fatal Error #02 - File Error:", err);
+                        } 
+                        else {
+                            console.log("Save complete.");
+                            server.send('Save complete.', socket);
                         }
+                    });
+                    fs.writeFile("users", users, function(err) {
+                        if(err) {
+                            console.log("Fatal Error #02 - File Error:", err);
+                        } 
+                        else {
+                            console.log("Save complete.");
+                            server.send('Save complete.', socket);
+                        }
+                    });
+                    fs.writeFile("unums", unums, function(err) {
+                        if(err) {
+                            console.log("Fatal Error #02 - File Error:", err);
+                        } 
+                        else {
+                            console.log("Save complete.");
+                            server.send('Save complete.', socket);
+                        }
+                    });
+                }
+            else {
+                if (command !== '') {
+                    if (waiting) {
+                            if (socket === waitingFor) {
+                                if (waitingType === 'login') {
+                                    user = command;
+                                    waiting = false;
+                                    console.log('Unsetting waiting flag...');
+                                    waitingFor = -1;
+                                    waitingType = 'null';
+                                }
+                                if (waitingType === 'register') {
+                                    length = length + 1;
+                                    users[length] = command;
+                                    unums[length] = socket;
+                            }
+                    }
                 }
             }
+            server.send(sent, socket);
         }
-        server.send(sent, socket);
+            }
+        
     }
-        }
-    function login(socket) {
-        server.send('Please authenticate with the login command or register with the register command.', socket);
-        tba[socket] = true;
-        }
-}
-}
+    };
+
+    }
+
+start();

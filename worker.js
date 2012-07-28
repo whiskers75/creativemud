@@ -39,9 +39,9 @@
         console.log('User numbers loaded!');        
     });
     
-        exports.handle = function handle(command1, socket) {
+        exports.handle = function handle(command, socket) {
             console.log('Data sent to handle()');
-            var command = command1.toString();
+            command = command.toString();
             console.log(command);
             if (command === 'look') {
                      server.send(items, socket);

@@ -14,15 +14,15 @@
         sockets.push(socket);
         
         socket.on('data', function(data, socket){
-            worker.handle(data, sockets.indexOf(socket));
+            worker.handle(data, socket);
         });
         
         socket.on('connection', function(socket){
             worker.handle('connection', socket);
         });
         
-        exports.send = function send(message, socketindex) {
-            sockets[socketindex].write(message);
+        exports.send = function send(message, socket) {
+            sockets[sockets.indexOf(socket)].write(message);
         };
         
         socket.on('end', function() {

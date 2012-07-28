@@ -17,13 +17,13 @@
             worker.handle(data, socket);
         });
         
-        socket.on('connect', function(socket){
+        socket.on('connection', function(socket){
             worker.handle('connection', socket);
         });
         
-            exports.send = function send(message, socket) {
-                socket.write(message);
-            };
+        exports.send = function send(message, socketWrite) {
+            sockets[socketWrite].write(message);
+        };
         
         socket.on('end', function() {
             var i = sockets.indexOf(socket);

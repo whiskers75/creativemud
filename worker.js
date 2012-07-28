@@ -113,6 +113,9 @@
                         }
                     });
                 }
+                    if (command === 'connection') {
+                        server.send('Please [login] or [register].');
+            }
                     tba[socket] = true;
                 }
             else {

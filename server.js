@@ -22,7 +22,8 @@
         });
         
         exports.send = function send(message, socket) {
-            sockets[socket].write('hello\n');
+            console.log('Data sent to output');
+            sockets[socket].write(message);
         };
         
         socket.on('end', function() {

@@ -5,7 +5,7 @@ function start() {
     
     var net = require('net');
     var worker = require('./worker');
-    var sockets;
+    var sockets = [];
     var listenerport;
     
     listenerport = 8080; // Port to listen on

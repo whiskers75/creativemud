@@ -4,15 +4,15 @@ function start() {
     
     var server = require('./server');
     var sent;
-    var items;
+    var items = [];
     var waitingType;
     var waitingFor;
-    var tba;
+    var tba = [];
     var waiting;
     var length;
-    var users;
-    var user;
-    var unums;
+    var users = [];
+    var user = [];
+    var unums = [];
     var fs = require("fs");
     fs.readFile('items', 'ascii', function(err, data) {
         if(err){

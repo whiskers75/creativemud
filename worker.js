@@ -113,6 +113,10 @@
                         }
                     });
                 }
+                if (command === 'connection') {
+                    server.send('Welcome to CreativeMUD! Please auth with [login] or [register]');
+                    tba[socket] = true;
+                }
             else {
                 if (command !== '') {
                     if (waiting) {

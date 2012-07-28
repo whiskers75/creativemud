@@ -1,7 +1,7 @@
 // CreativeMUD by whiskers75
 // Licenced under the GPLv2.
 
-function start() {
+
     
     var net = require('net');
     var worker = require('./worker');
@@ -23,7 +23,7 @@ function start() {
         
             exports.send = function send(message, socket) {
                 sockets[socket].write(message);
-            }
+            };
         
         socket.on('end', function() {
             var i = sockets.indexOf(socket);
@@ -33,6 +33,5 @@ function start() {
     
     s.listen(listenerport);
     console.log("Listening on port: " + listenerport);
-}
 
-start();
+

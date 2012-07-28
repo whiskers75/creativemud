@@ -21,7 +21,7 @@ function start() {
             worker.handle('connection', socket);
         });
         
-            function send(message, socket) {
+            exports.send = function send(message, socket) {
                 sockets[socket].write(message);
             }
         

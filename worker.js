@@ -39,7 +39,7 @@ function start() {
         console.log('User numbers loaded!');        
     });
     
-        function handle(command, socket) {
+        exports.handle = function handle(command, socket) {
             if (command === 'look') {
                     sent = items;
             }
@@ -136,7 +136,7 @@ function start() {
         }
             }
         
-    }
+    };
 
     }
 

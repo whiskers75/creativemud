@@ -45,8 +45,6 @@
                      server.send(items, socket);
                     console.log('Look command interpreted.');
             }
-            if (command === 'help') {
-                
             if (command === 'login') {
                 console.log('Login command interpreted.');
                     if (tba[socket]) {

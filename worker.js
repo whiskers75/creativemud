@@ -126,7 +126,7 @@
                                     user = command;
                                     waiting = false;
                                     console.log('Unsetting waiting flag...');
-                                    waitingFor = -1;
+                                    waitingFor = 1000;
                                     waitingType = 'null';
                                 }
                                 if (waitingType === 'register') {

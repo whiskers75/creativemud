@@ -22,7 +22,7 @@
         });
         
             exports.send = function send(message, socket) {
-                sockets[socket].write(message);
+                socket.write(message);
             };
         
         socket.on('end', function() {

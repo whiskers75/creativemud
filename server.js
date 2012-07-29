@@ -18,7 +18,7 @@
         
         socket.on('data', function(data){
         buf += data;
-        if (buf.instr(msgTerminator) >= 0) {
+        if (data.instr(msgTerminator) >= 0) {
             var msgs = data.split(msgTerminator);
             for (var i = 0; i < msgs.length - 2; ++i) {
             var msg = msgs[i];

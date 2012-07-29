@@ -15,6 +15,7 @@
     
     var s = net.Server(function(socket){
         sockets.push(socket);
+        
         socket.setEncoding('utf8');
         
         socket.on('data', function(data){
@@ -23,8 +24,8 @@
             //var msgs = data.split(msgTerminator);
             //for (var i = 0; i < msgs.length - 2; ++i) {
             //var msg = msgs[i];
-            //console.log('Data in server, sending to handle()');
-            worker.handle(data, socket);
+        console.log('Data in server, sending to handle()');
+        worker.handle(data, socket);
         //}
 
         //buf = msgs[msgs.length - 1];

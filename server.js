@@ -21,7 +21,7 @@
         socket.on('data', function(data){
         //buf += data;
         //if (buf.instr(msgTerminator) >= 0) {
-        var data2 = data.split(msgTerminator);
+        var data2 = data.replace(/\n$/, '');
             //for (var i = 0; i < msgs.length - 2; ++i) {
             //var msg = msgs[i];
         console.log('Data in server, sending to handle()');

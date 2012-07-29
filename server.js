@@ -19,16 +19,8 @@
         socket.setEncoding('utf8');
         
         socket.on('data', function(data){
-        //buf += data;
-        //if (buf.instr(msgTerminator) >= 0) {
-            //for (var i = 0; i < msgs.length - 2; ++i) {
-            //var msg = msgs[i];
         console.log('Data in server, sending to handle()');
         worker.handle(data.replace(/[\n\r]/g, ''), socket);
-        //}
-
-        //buf = msgs[msgs.length - 1];
-
         });
         
         socket.on('connection', function(socket){

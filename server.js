@@ -46,7 +46,7 @@
             sockets.splice(i, 1);
         });
     });
-    });
+    
     
     s.listen(listenerport);
     console.log("Listening on port: " + listenerport);

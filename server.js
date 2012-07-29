@@ -8,7 +8,7 @@
     var sockets = [];
     var listenerport;
     var msgTerminator = '\n';
-    var buf = '';
+    var buf = new Buffer(100);
 
     
     listenerport = 8080; // Port to listen on
@@ -18,7 +18,7 @@
         
         socket.on('data', function(data){
         buf += data;
-        if (data.instr(msgTerminator) >= 0) {
+        if (buf.instr(msgTerminator) >= 0) {
             var msgs = data.split(msgTerminator);
             for (var i = 0; i < msgs.length - 2; ++i) {
             var msg = msgs[i];

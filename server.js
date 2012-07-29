@@ -21,11 +21,11 @@
         socket.on('data', function(data){
         //buf += data;
         //if (buf.instr(msgTerminator) >= 0) {
-            //var msgs = data.split(msgTerminator);
+        var data2 = data.split(msgTerminator);
             //for (var i = 0; i < msgs.length - 2; ++i) {
             //var msg = msgs[i];
         console.log('Data in server, sending to handle()');
-        worker.handle(data, socket);
+        worker.handle(data2, socket);
         //}
 
         //buf = msgs[msgs.length - 1];

@@ -29,6 +29,7 @@
         
         exports.send = function send(message, socket) {
             console.log('Data sent to output');
+            message += '\n';
             socket.write(message);
         };
         

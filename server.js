@@ -75,6 +75,7 @@ net.createServer(function (socket) {
                                     else {
                                         callback(null, 'Please enter PIN.');
                                         read = db.get(cmd + ':pin');
+                                        console.log(read);
                                         n = db.get(cmd + ':name');
                                         waitingType = 'pin';
                                         wait = 1;

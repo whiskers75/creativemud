@@ -2,6 +2,8 @@
 // Licenced under the GPLv2.
 
 var sockets = [];
+var redis = require('redis');
+var db = redis.createClient();
 var players = [];
 var repl = require('repl');
 var net = require('net');
@@ -13,15 +15,19 @@ var waitingType = '';
 var wait = 0;
 var users = require('./users.json');
 var nnames = [];
-var regs = 0;
 var items = require('./items.json');
 var owners = require('./owners.json');
 var areas = require('./areas.json');
-var file;
+var read;
+var error;
+
+db.on('error', function(err) {
+    console.log('Database Error: '+ err);
+});
 
 
 net.createServer(function (socket) {
-    socket.write('Welcome to CreativeMUD, version 0.0.1!\nThere are currently '+ len + ' players logged in.\nTo exit CreativeMUD, type \'.exit\'.\n');
+    socket.write('Welcome to CreativeMUD, version 0.0.1!\nThere are currently '+ len + ' players logged in.\nTo exit CreativeMUD, type \'.exit\'.\nIf CreativeMUD seems to freeze, type \'.break\'.\n');
     sockets.push(socket);
     players[sockets.indexOf(socket)] = 'none';
     len = len + 1;
@@ -32,13 +38,14 @@ net.createServer(function (socket) {
         'eval': function(cmd, context, filename, callback){
             cmd = cmd.replace("\n)","").replace("(","");
             console.log(cmd);
+            
             if (cmd === "login") {
                 console.log('login');
                 if (waiting) {
                     callback(null, 'Please wait a moment and try again.');
                 }
                 if (!waiting) {
-                    callback(null, 'Please enter PIN.');
+                    callback(null, 'Please enter username.');
                     waiting = true;
                     waitingFor = socket;
                     waitingType = 'login';
@@ -58,11 +65,7 @@ net.createServer(function (socket) {
                 }
             }
             if (cmd === "save") {
-                fs.writeFileSync('./items.json', JSON.stringify(items), 'utf-8');
-                fs.writeFileSync('./areas.json', JSON.stringify(areas), 'utf-8');
-                fs.writeFileSync('./owners.json', JSON.stringify(owners), 'utf-8');
-                fs.writeFileSync('./users.json', JSON.stringify(users), 'utf-8');
-                callback(null, 'Save complete.');
+                db.set
             }
             // put new commands here...
             else { 
@@ -71,29 +74,46 @@ net.createServer(function (socket) {
                         if (waiting) {
                             if (waitingFor === socket) {
                                 if (waitingType === 'login') {
-                                    players[sockets.indexOf(socket)] = users[cmd];
-                                    waiting = false;
-                                    waitingFor = -1;
-                                    waitingType = 'none';
-                                    callback(null, 'Done!');
-                                    callback(null, 'Logged in as: '+ players[sockets.indexOf(socket)]);
+                                    try {
+                                        read = require('./'+ cmd + '.json');
+                                        read = JSON.parse(read);
+                                    }
+                                    catch (err) {
+                                        console.log('Error: '+ err);
+                                        callback(null, 'Error!');
+                                        error = err;
+                                    }
+                                    if (!error) {
+                                        callback(null, 'Plese enter PIN.');
+                                        wait = 1;
+                                        waitingType = 'pin';
+                                    }
+                                    if (error) {
+                                        error = undefined;
+                                    }
+                                }
+                                if (waitingType === 'pin') {
+                                    if (wait === 0) {
+                                        if (cmd === read.pin) {
+                                            waiting = false;
+                                            waitingFor = -1;
+                                            waitingType = 'none';
+                                            callback(null, 'Done!');
+                                            callback(null, 'Logged in as: '+ players[sockets.indexOf(socket)]);
+                                        }
+                                    }
                                 }
                                 if (waitingType === 'register') {
-                                    if (users[cmd] !== undefined) {
-                                        callback(null, 'This PIN is taken. Please try again.');
-                                    }
-                                    else {
-                                        nnames[sockets.indexOf(socket)] = cmd;
-                                        waitingType = 'username';
-                                        wait = 0;
-                                    }
+                                    nnames[sockets.indexOf(socket)] = cmd;
+                                    waitingType = 'username';
+                                    callback(null, 'Please enter a username.');
+                                    wait = 1;
                                 }
                                 if (waitingType === 'username') {
                                     if (wait === 0) {
-                                        regs += 1;
-                                        users[nnames[sockets.indexOf(socket)]] = regs;
-                                        callback(null, 'Registered.');
-                                        players[sockets.indexOf(socket)] = users[cmd];
+                                        fs.writeFileSync('./'+ cmd + '.json', JSON.stringify({ pin:nnames[sockets.indexOf(socket)], name:cmd, admin:false }, null, 4), 'utf8');
+                                        read = require('./'+ cmd + '.json');
+                                        players[sockets.indexOf(socket)] = read.name;
                                         waiting = false;
                                         waitingFor = -1;
                                         waitingType = 'none';

@@ -7,19 +7,14 @@ var db = redis.createClient();
 var players = [];
 var repl = require('repl');
 var net = require('net');
-var fs = require('fs');
 var len = 0;
 var waiting = false;
 var waitingFor = -1;
 var waitingType = '';
 var wait = 0;
-var users = require('./users.json');
 var nnames = [];
-var items = require('./items.json');
-var owners = require('./owners.json');
-var areas = require('./areas.json');
 var read;
-var error;
+var n;
 
 db.on('error', function(err) {
     console.log('Database Error: '+ err);
@@ -65,7 +60,7 @@ net.createServer(function (socket) {
                 }
             }
             if (cmd === "save") {
-                db.set
+                callback(null, 'Saves are automatic.');
             }
             // put new commands here...
             else { 
@@ -74,31 +69,25 @@ net.createServer(function (socket) {
                         if (waiting) {
                             if (waitingFor === socket) {
                                 if (waitingType === 'login') {
-                                    try {
-                                        read = require('./'+ cmd + '.json');
-                                        read = JSON.parse(read);
+                                    if (db.get(cmd + ':pin') === null) {
+                                        callback(null, 'Error (maybe this user does not exist?)');
                                     }
-                                    catch (err) {
-                                        console.log('Error: '+ err);
-                                        callback(null, 'Error!');
-                                        error = err;
-                                    }
-                                    if (!error) {
-                                        callback(null, 'Plese enter PIN.');
+                                    else {
+                                        callback(null, 'Please enter PIN.');
+                                        read = db.get(cmd + ':pin');
+                                        n = db.get(cmd + ':name');
+                                        waitingType = ('pin');
                                         wait = 1;
-                                        waitingType = 'pin';
-                                    }
-                                    if (error) {
-                                        error = undefined;
                                     }
                                 }
                                 if (waitingType === 'pin') {
                                     if (wait === 0) {
-                                        if (cmd === read.pin) {
+                                        if (cmd === read) {
                                             waiting = false;
                                             waitingFor = -1;
                                             waitingType = 'none';
                                             callback(null, 'Done!');
+                                            players[sockets.indexOf(socket)] = n;
                                             callback(null, 'Logged in as: '+ players[sockets.indexOf(socket)]);
                                         }
                                     }
@@ -111,9 +100,9 @@ net.createServer(function (socket) {
                                 }
                                 if (waitingType === 'username') {
                                     if (wait === 0) {
-                                        fs.writeFileSync('./'+ cmd + '.json', JSON.stringify({ pin:nnames[sockets.indexOf(socket)], name:cmd, admin:false }, null, 4), 'utf8');
-                                        read = require('./'+ cmd + '.json');
-                                        players[sockets.indexOf(socket)] = read.name;
+                                        db.set(cmd + ':pin', nnames[sockets.indexOf(socket)]);
+                                        db.set(cmd + ':name', cmd);
+                                        players[sockets.indexOf(socket)] = db.get(cmd + ':name');
                                         waiting = false;
                                         waitingFor = -1;
                                         waitingType = 'none';

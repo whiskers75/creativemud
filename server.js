@@ -76,7 +76,7 @@ net.createServer(function (socket) {
                                         callback(null, 'Please enter PIN.');
                                         read = db.get(cmd + ':pin');
                                         n = db.get(cmd + ':name');
-                                        waitingType = ('pin');
+                                        waitingType = 'pin';
                                         wait = 1;
                                     }
                                 }

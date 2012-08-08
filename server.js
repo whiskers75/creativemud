@@ -73,12 +73,15 @@ net.createServer(function (socket) {
                                         callback(null, 'Error (maybe this user does not exist?)');
                                     }
                                     else {
-                                        callback(null, 'Please enter PIN.');
-                                        read = db.get(cmd + ':pin');
-                                        console.log(read);
-                                        n = db.get(cmd + ':name');
+                                        db.get(cmd + ':pin', function(data){
+                                            read = data;
+                                        });
+                                        n = db.get(cmd + ':name', function(data) {
+                                            n = data;
+                                        });
                                         waitingType = 'pin';
                                         wait = 1;
+                                        setTimeout(function() {callback(null, 'Please enter PIN.');}, 1200);
                                     }
                                 }
                                 if (waitingType === 'pin') {
@@ -91,6 +94,8 @@ net.createServer(function (socket) {
                                             players[sockets.indexOf(socket)] = n;
                                             callback(null, 'Logged in as: '+ players[sockets.indexOf(socket)]);
                                         }
+                                        else {
+                                            callback(null, 'PIN incorrect');
                                     }
                                 }
                                 if (waitingType === 'register') {

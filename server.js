@@ -22,13 +22,12 @@ var startsWith = function (superstr, str) {
   return !superstr.indexOf(str);
 };
 var login = function(name, socket, passcode, callback) { 
-    db.get(name + ':name', function(data) {
-        if (data === null) {
-            callback('Record not found!');
+    db.get(name + ':name', function(res) {
+        if (!1) {
         }
         else {
             db.get(name + ':pin', function(pin) {
-                if (name === data) {
+                if (name === res) {
                     if (passcode === pin) {
                         players[sockets.indexOf(socket)] = name;
                         callback('Logged in as: ' + players[sockets.indexOf(socket)]);

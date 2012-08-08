@@ -33,11 +33,11 @@ var login = function(name, socket, passcode, callback) {
                         callback('Logged in as: ' + players[sockets.indexOf(socket)]);
                     }
                     else {
-                        callback('Not matched.');
+                        
                     }
                 }
                 else {
-                    callback('Not matched.');
+                    
                 }
             });
         }

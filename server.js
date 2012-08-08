@@ -17,7 +17,56 @@ var read;
 var n;
 var go = 0;
 var finish;
-
+var args;
+var startsWith = function (superstr, str) {
+  return !superstr.indexOf(str);
+};
+var login = function(name, socket, passcode, callback) { 
+    db.get(name + ':name', function(data) {
+        if (data === null) {
+            callback('Record not found!');
+        }
+        else {
+            db.get(name + ':pin', function(pin) {
+                if (name === data) {
+                    if (passcode === pin) {
+                        players[sockets.indexOf(socket)] = name;
+                        callback('Logged in as: ' + players[sockets.indexOf(socket)]);
+                    }
+                    else {
+                        callback('Not matched.');
+                    }
+                }
+                else {
+                    callback('Not matched.');
+                }
+            });
+        }
+    });
+};
+var register = function(name, socket, passcode, callback) {
+    if (name === null) {
+        callback('Name null!');
+        return;
+    }
+    if (name === '') {
+        callback('Name empty!');
+        return;
+    }
+    db.get(name + ':name', function(data) {
+        if (data !== null) {
+            callback('This name has been taken!');
+        }
+        else {
+            db.set(name + ':name', name, function() {
+                db.set(name + ':pin', passcode, function() {
+                    players[sockets.indexOf(socket)] = name;
+                    callback('Logged in as: ' + players[sockets.indexOf[socket]);
+                });
+            });
+        }
+    });
+};
 
 db.on('error', function(err) {
     console.log('Database Error: '+ err);
@@ -25,7 +74,7 @@ db.on('error', function(err) {
 
 
 net.createServer(function (socket) {
-    socket.write('Welcome to CreativeMUD, version 0.0.1!\nThere are currently '+ len + ' players logged in.\nTo exit CreativeMUD, type \'.exit\'.\nIf CreativeMUD seems to freeze, type \'.break\'.\n');
+    socket.write('Welcome to CreativeMUD, version 0.0.1!\nThere are currently '+ len + ' players logged in.\nTo exit CreativeMUD, type \'.exit\'.\nIf CreativeMUD seems to freeze, type \'.break\'.\nType \'help\' for help.\n');
     sockets.push(socket);
     players[sockets.indexOf(socket)] = 'none';
     len = len + 1;
@@ -36,106 +85,30 @@ net.createServer(function (socket) {
         'eval': function(cmd, context, filename, callback){
             cmd = cmd.replace("\n)","").replace("(","");
             console.log(cmd);
+            args = cmd.split(" ");
             
-            if (cmd === "login") {
+            if (startsWith(cmd, 'login')) {
                 console.log('login');
-                if (waiting) {
-                    callback(null, 'Please wait a moment and try again.');
-                }
-                if (!waiting) {
-                    callback(null, 'Please enter username.');
-                    waiting = true;
-                    waitingFor = socket;
-                    waitingType = 'login';
-                    wait = 1;
-                }
+                login(args[1], socket, args[2], function(data) {
+                    callback(null, data);
+                });
             }
-            if (cmd === "register") {
-                if (waiting) {
-                    callback(null, 'Please wait a moment and try again.');
-                }
-                if (!waiting) {
-                    callback(null, 'Please enter desired PIN.');
-                    waiting = true;
-                    waitingFor = socket;
-                    waitingType = 'register';
-                    wait = 1;
-                }
+            if (startsWith(cmd, 'login')) {
+                register(args[1], socket, args[2], function(data) {
+                    callback(null, data);
+                });
             }
             if (cmd === "save") {
                 callback(null, 'Saves are automatic.');
             }
-            // put new commands here...
-            else { 
-                if(wait === 0) {
-                    if (cmd !== '') {
-                        if (waiting) {
-                            if (waitingFor === socket) {
-                                if (waitingType === 'login') {
-                                    if (db.get(cmd + ':pin') === null) {
-                                        callback(null, 'Error (maybe this user does not exist?)');
-                                    }
-                                    else {
-                                        db.get(cmd + ':pin', function(data){
-                                            read = data;
-                                            go += 1;
-                                            if (go === 2) {
-                                                finish();
-                                            }
-                                        });
-                                        db.get(cmd + ':name', function(data) {
-                                            n = data;
-                                            go += 1;
-                                            if (go === 2) {
-                                                finish();
-                                            }
-                                        });
-                                        finish = function() {
-                                            callback(null, 'Please enter PIN.');
-                                            waitingType = 'pin';
-                                            wait = 1;
-                                            go = 0;
-                                        };
-                                    }
-                                }
-                                if (waitingType === 'pin') {
-                                    if (wait === 0) {
-                                        if (cmd === read) {
-                                            waiting = false;
-                                            waitingFor = -1;
-                                            waitingType = 'none';
-                                            callback(null, 'Done!');
-                                            players[sockets.indexOf(socket)] = n;
-                                            callback(null, 'Logged in as: '+ players[sockets.indexOf(socket)]);
-                                        }
-                                        else {
-                                            callback(null, 'PIN incorrect');
-                                    }
-                                }
-                                if (waitingType === 'register') {
-                                    nnames[sockets.indexOf(socket)] = cmd;
-                                    waitingType = 'username';
-                                    callback(null, 'Please enter a username.');
-                                    wait = 1;
-                                }
-                                if (waitingType === 'username') {
-                                    if (wait === 0) {
-                                        db.set(cmd + ':pin', nnames[sockets.indexOf(socket)]);
-                                        db.set(cmd + ':name', cmd);
-                                        players[sockets.indexOf(socket)] = db.get(cmd + ':name');
-                                        waiting = false;
-                                        waitingFor = -1;
-                                        waitingType = 'none';
-                                        callback(null, 'Logged in as: '+ players[sockets.indexOf(socket)]);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+            if (cmd === "help") {
+                callback(null, '');
+                callback(null, 'Help');
+                callback(null, 'Login with login [username] [pin]');
+                callback(null, 'Register with register [username] [pin]');
             }
-            wait = 0;
-    }}}).on('exit', function() {
+            // put new commands here...
+    }}).on('exit', function() {
         socket.end();
         len = len - 1;
     });

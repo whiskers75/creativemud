@@ -94,6 +94,7 @@ net.createServer(function (socket) {
                                             callback(null, 'Please enter PIN.');
                                             waitingType = 'pin';
                                             wait = 1;
+                                            go = 0;
                                         };
                                     }
                                 }

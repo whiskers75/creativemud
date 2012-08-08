@@ -15,6 +15,9 @@ var wait = 0;
 var nnames = [];
 var read;
 var n;
+var go = 0;
+var finish;
+
 
 db.on('error', function(err) {
     console.log('Database Error: '+ err);
@@ -75,13 +78,23 @@ net.createServer(function (socket) {
                                     else {
                                         db.get(cmd + ':pin', function(data){
                                             read = data;
+                                            go += 1;
+                                            if (go === 2) {
+                                                finish();
+                                            }
                                         });
-                                        n = db.get(cmd + ':name', function(data) {
+                                        db.get(cmd + ':name', function(data) {
                                             n = data;
+                                            go += 1;
+                                            if (go === 2) {
+                                                finish();
+                                            }
                                         });
-                                        waitingType = 'pin';
-                                        wait = 1;
-                                        setTimeout(function() {callback(null, 'Please enter PIN.');}, 1200);
+                                        finish = function() {
+                                            callback(null, 'Please enter PIN.');
+                                            waitingType = 'pin';
+                                            wait = 1;
+                                        };
                                     }
                                 }
                                 if (waitingType === 'pin') {

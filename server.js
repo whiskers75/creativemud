@@ -121,7 +121,7 @@ net.createServer(function (socket) {
                 }
             }
             wait = 0;
-    }}).on('exit', function() {
+    }}}).on('exit', function() {
         socket.end();
         len = len - 1;
     });

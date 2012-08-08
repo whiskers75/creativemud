@@ -61,7 +61,7 @@ var register = function(name, socket, passcode, callback) {
             db.set(name + ':name', name, function() {
                 db.set(name + ':pin', passcode, function() {
                     players[sockets.indexOf(socket)] = name;
-                    callback('Logged in as: ' + players[sockets.indexOf(socket));
+                    callback('Logged in as: ' + players[sockets.indexOf(socket)]);
                 });
             });
         }

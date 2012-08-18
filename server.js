@@ -8,29 +8,26 @@ var players = [];
 var repl = require('repl');
 var net = require('net');
 var len = 0;
-var waiting = false;
-var waitingFor = -1;
-var waitingType = '';
-var wait = 0;
-var nnames = [];
-var read;
-var n;
-var go = 0;
-var finish;
 var args;
+
 var startsWith = function (superstr, str) {
   return !superstr.indexOf(str);
 };
 var login = function(name, socket, passcode, callback) { 
-    db.get(name + ':name', function(res) {
-        if (!1) {
+    db.get(name + ':name', function(err, res) {
+        if (err) {
+            return callback('Error: ' + err);
         }
         else {
-            db.get(name + ':pin', function(pin) {
-                if (name === res) {
-                    if (passcode === pin) {
+            var res2 = res;
+            db.get(name + ':pin', function(err, res) {
+                if (err) {
+                    return callback('Error: ' + err);
+                }
+                else if (name === res2) {
+                    if (passcode === res) {
                         players[sockets.indexOf(socket)] = name;
-                        callback('Logged in as: ' + players[sockets.indexOf(socket)]);
+                        return callback('Logged in as: ' + players[sockets.indexOf(socket)]);
                     }
                     else {
                         
@@ -45,26 +42,39 @@ var login = function(name, socket, passcode, callback) {
 };
 var register = function(name, socket, passcode, callback) {
     if (name === null) {
-        callback('Name null!');
-        return;
+        return callback('Name null!');
     }
-    if (name === '') {
-        callback('Name empty!');
-        return;
+    else if (name === '') {
+        return callback('Name empty!');
     }
-    db.get(name + ':name', function(data) {
-        if (data !== null) {
-            callback('This name has been taken!');
-        }
-        else {
-            db.set(name + ':name', name, function() {
-                db.set(name + ':pin', passcode, function() {
-                    players[sockets.indexOf(socket)] = name;
-                    callback('Logged in as: ' + players[sockets.indexOf(socket)]);
+    else {
+        db.get(name + ':name', function(error, res) {
+            if (error) {
+                return callback('Error: ' + error);
+            }
+            else if (res !== null) {
+                return callback('This name has been taken!');
+            }
+            else {
+                db.set(name + ':name', name, function(error) {
+                    if (error) {
+                        return callback('Error: ' + error);
+                    }
+                    else {
+                        db.set(name + ':pin', passcode, function(error) {
+                            if (error) {
+                                return callback('Error: ' + error);
+                            }
+                            else {
+                                players[sockets.indexOf(socket)] = name;
+                                callback('Logged in as: ' + players[sockets.indexOf(socket)]);
+                            }
+                        });
+                    }
                 });
-            });
-        }
-    });
+            }
+        });
+    }
 };
 
 db.on('error', function(err) {
@@ -79,20 +89,19 @@ net.createServer(function (socket) {
     len = len + 1;
     repl.start({
         prompt:"CreativeMUD, socket "+ sockets.indexOf(socket)+"> ",
-        input: socket,
-        output: socket,
-        'eval': function(cmd, context, filename, callback){
+        'input': socket,
+        'output': socket,
+        'eval': function(cmd, context, filename, callback) {
             cmd = cmd.replace("\n)","").replace("(","");
             console.log(cmd);
             args = cmd.split(" ");
             
             if (startsWith(cmd, 'login')) {
-                console.log('login');
                 login(args[1], socket, args[2], function(data) {
                     callback(null, data);
                 });
             }
-            if (startsWith(cmd, 'login')) {
+            if (startsWith(cmd, 'register')) {
                 register(args[1], socket, args[2], function(data) {
                     callback(null, data);
                 });

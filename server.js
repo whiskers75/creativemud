@@ -11,8 +11,11 @@ var len = 0;
 var args;
 var config = require('../config.js');
 
-db.auth(config.auth, function() {
+db.auth(config, function() {
     console.log('Auth\'d');
+    db.on('error', function(err) {
+        console.log('Database Error: '+ err);
+    });
 });
 
 var startsWith = function (superstr, str) {
@@ -82,9 +85,7 @@ var register = function(name, socket, passcode, callback) {
     }
 };
 
-db.on('error', function(err) {
-    console.log('Database Error: '+ err);
-});
+
 
 
 net.createServer(function (socket) {

@@ -3,12 +3,17 @@
 
 var sockets = [];
 var redis = require('redis');
-var db = redis.createClient();
+var db = redis.createClient(9176, 'koi.redistogo.com');
 var players = [];
 var repl = require('repl');
 var net = require('net');
 var len = 0;
 var args;
+var config = require('../config.js');
+
+db.auth(config.auth, function() {
+    console.log('Auth\'d');
+});
 
 var startsWith = function (superstr, str) {
   return !superstr.indexOf(str);
@@ -122,6 +127,6 @@ net.createServer(function (socket) {
     });
 }).listen(5001);
 
-
+});
 
 

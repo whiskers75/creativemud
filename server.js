@@ -159,11 +159,11 @@ net.createServer(function (socket) {
             if (cmd === "save") {
                 callback(null, 'Saves are automatic.');
             }
+            if (cmd === "quit") {
+                socket.end();
+            }
             if (cmd === "help") {
-                callback(null, '');
-                callback(null, 'Help');
-                callback(null, 'Login with login [username] [pin]');
-                callback(null, 'Register with register [username] [pin]');
+                callback(null, 'Help\nLogin with login [username] [pin]\nRegister with register [username] [pin]\nQuit with quit');
             }
             // put new commands here...
     }}).on('exit', function() {

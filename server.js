@@ -141,6 +141,9 @@ net.createServer(function (socket) {
         prompt:"CreativeMUD, socket "+ sockets.indexOf(socket)+"> ",
         'input': socket,
         'output': socket,
+        'writer': function(object) {
+            socket.write(object);
+        },
         'eval': function(cmd, context, filename, callback) {
             cmd = cmd.replace("\n)","").replace("(","");
             // console.log(cmd);
@@ -163,7 +166,7 @@ net.createServer(function (socket) {
                 socket.end();
             }
             if (cmd === "help") {
-                callback(null, 'Help: Login with login [username] [pin], Register with register [username] [pin], Quit with quit');
+                callback(null, 'Help\nLogin with login [username] [pin]\nRegister with register [username] [pin]\nQuit with quit');
             }
             // put new commands here...
     }}).on('exit', function() {

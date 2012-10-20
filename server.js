@@ -163,7 +163,7 @@ net.createServer(function (socket) {
                 socket.end();
             }
             if (cmd === "help") {
-                callback(null, 'Help\nLogin with login [username] [pin]\nRegister with register [username] [pin]\nQuit with quit');
+                callback(null, 'Help: Login with login [username] [pin], Register with register [username] [pin], Quit with quit');
             }
             // put new commands here...
     }}).on('exit', function() {

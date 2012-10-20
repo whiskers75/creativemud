@@ -3,24 +3,48 @@
 
 var sockets = [];
 var redis = require('redis');
-var db = redis.createClient(9176, 'koi.redistogo.com');
+var db = redis.createClient(9033, process.env.REDIS); 
 var players = [];
 var repl = require('repl');
 var net = require('net');
 var len = 0;
 var args;
-var config = require('../config.js');
+var password = process.env.PASSWORD;
 
-db.auth(config, function() {
+db.auth(password, function() { // For auth, comment out if not needed..
     console.log('Auth\'d');
     db.on('error', function(err) {
         console.log('Database Error: '+ err);
     });
 });
+var getArea = function(player) {
+    db.get(player + ':area', function(err, res) {
+        if(err) {
+            return false;
+        }
+        else {
+            return res;
+        }
+    });
+};
+var setArea = function(player, area) {
+    db.set(player + ':area', area, function(err, res) {
+    if (err) {
+        return false;
+    }
+    if (!err) {
+        return true;
+    }
+    });
+};
+var init = function(player) {
+    setArea(player, '0');
+};
 
 var startsWith = function (superstr, str) {
   return !superstr.indexOf(str);
 };
+
 var login = function(name, socket, passcode, callback) { 
     db.get(name + ':name', function(err, res) {
         if (err) {
@@ -75,6 +99,7 @@ var register = function(name, socket, passcode, callback) {
                             }
                             else {
                                 players[sockets.indexOf(socket)] = name;
+                                init(players[sockets.indexOf(socket)]))
                                 callback('Logged in as: ' + players[sockets.indexOf(socket)]);
                             }
                         });
@@ -85,11 +110,8 @@ var register = function(name, socket, passcode, callback) {
     }
 };
 
-
-
-
 net.createServer(function (socket) {
-    socket.write('Welcome to CreativeMUD, version 0.0.1!\nThere are currently '+ len + ' players logged in.\nTo exit CreativeMUD, type \'.exit\'.\nIf CreativeMUD seems to freeze, type \'.break\'.\nType \'help\' for help.\n');
+    socket.write('Welcome to CreativeMUD, version 0.0.2!\nThere are currently '+ len + ' players logged in.\nTo exit CreativeMUD, type \'.exit\'.\nIf CreativeMUD seems to freeze, type \'.break\'.\nType \'help\' for help.\n');
     sockets.push(socket);
     players[sockets.indexOf(socket)] = 'none';
     len = len + 1;
@@ -99,7 +121,7 @@ net.createServer(function (socket) {
         'output': socket,
         'eval': function(cmd, context, filename, callback) {
             cmd = cmd.replace("\n)","").replace("(","");
-            console.log(cmd);
+            // console.log(cmd);
             args = cmd.split(" ");
             
             if (startsWith(cmd, 'login')) {

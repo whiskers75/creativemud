@@ -142,8 +142,7 @@ net.createServer(function (socket) {
         'input': socket,
         'output': socket,
         'writer': function(object) {
-            socket.write(object);
-            return true;
+            return object;
         },
         'eval': function(cmd, context, filename, callback) {
             cmd = cmd.replace("\n)","").replace("(","");

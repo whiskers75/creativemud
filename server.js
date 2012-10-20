@@ -9,7 +9,7 @@ var repl = require('repl');
 var net = require('net');
 var len = 0;
 var args;
-var password = process.env.PASSWORD;
+var password = require('../config.js');
 
 db.auth(password, function() { // For auth, comment out if not needed..
     console.log('Auth\'d');

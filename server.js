@@ -41,6 +41,28 @@ var init = function(player) {
     setArea(player, '0');
 };
 
+var getAreaMetadata = function(area, meta) {
+    db.get('area_'+area+':'+meta, function(err, res) {
+        if (err) {
+            return false;
+        }
+        if (!err) {
+            return res;
+        }
+    });
+};
+
+var setAreaMetadata = function(area, meta, val) {
+    db.set('area_'+area+':'+meta, val, function(err, res) {
+        if (err) {
+            return false;
+        }
+        if (!err) {
+            return true;
+        }
+    });
+};
+
 var startsWith = function (superstr, str) {
   return !superstr.indexOf(str);
 };
@@ -99,7 +121,7 @@ var register = function(name, socket, passcode, callback) {
                             }
                             else {
                                 players[sockets.indexOf(socket)] = name;
-                                init(players[sockets.indexOf(socket)]))
+                                init(players[sockets.indexOf(socket)]);
                                 callback('Logged in as: ' + players[sockets.indexOf(socket)]);
                             }
                         });

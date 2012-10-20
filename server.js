@@ -10,11 +10,13 @@ var net = require('net');
 var len = 0;
 var args;
 var password = require('../config.js');
+var version = "0.0.3";
 
 db.auth(password, function() { // For auth, comment out if not needed..
     console.log('Auth\'d');
     db.on('error', function(err) {
-        console.log('Database Error: '+ err);
+        console.error('Database Error: '+ err);
+        process.exit(1);
     });
 });
 var getArea = function(player) {
@@ -133,7 +135,7 @@ var register = function(name, socket, passcode, callback) {
 };
 
 net.createServer(function (socket) {
-    socket.write('Welcome to CreativeMUD, version 0.0.2!\nThere are currently '+ len + ' players logged in.\nTo exit CreativeMUD, type \'.exit\'.\nIf CreativeMUD seems to freeze, type \'.break\'.\nType \'help\' for help.\n');
+    socket.write('Welcome to CreativeMUD, version '+version+'\nThere are currently '+ len + ' players logged in.\nTo exit CreativeMUD, type \'.exit\'.\nIf CreativeMUD seems to freeze, type \'.break\'.\nType \'help\' for help.\n');
     sockets.push(socket);
     players[sockets.indexOf(socket)] = 'none';
     len = len + 1;
@@ -154,10 +156,17 @@ net.createServer(function (socket) {
                     callback(null, data);
                 });
             }
+            if (startsWith(cmd, 'logout')) {
+                players[sockets.indexOf(socket)] = 'none';
+                callback(null, 'Logged out');
+            }
             if (startsWith(cmd, 'register')) {
                 register(args[1], socket, args[2], function(data) {
                     callback(null, data);
                 });
+            }
+            if (cmd === "look") {
+                callback(null, getAreaMetadata(getArea(players[sockets.indexOf(socket)]), 'title') + '\n' + getAreaMetadata(getArea(players[sockets.indexOf(socket)]), 'desc'));
             }
             if (cmd === "save") {
                 callback(null, 'Saves are automatic.');

@@ -3,7 +3,7 @@
 
 var sockets = [];
 var redis = require('redis');
-var db = redis.createClient(9033, process.env.REDIS); 
+var db = redis.createClient(9033, 'sole.redistogo.com'); 
 var players = [];
 var repl = require('repl');
 var net = require('net');

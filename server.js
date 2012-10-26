@@ -171,6 +171,7 @@ net.createServer(function (socket) {
     });
     sockets.push(socket);
     socket.once('data', function(data) {
+        data.replace(/\n/g,'');
         console.log(data);
         nameLogins[sockets.indexOf(socket)] = data;
         if (data === null) {
@@ -181,9 +182,11 @@ net.createServer(function (socket) {
             if (!doesNameExist(data)) {
                 socket.write('It looks like that might be a new name. Would you like to register? (y/n)\n');
                 socket.once('data', function(data) {
+                    data.replace(/\n/g,'');
                     if (data === 'y') {
                         socket.write('Well then. Please enter a passcode.\n');
                         socket.once('data', function(data) {
+                            data.replace(/\n/g,'');
                             socket.write(register(nameLogins[sockets.indexOf(socket)], socket, data));
                             socket.write('Welcome to CreativeMUD.');
                             startREPL();

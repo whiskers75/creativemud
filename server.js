@@ -9,6 +9,7 @@ var repl = require('repl');
 var net = require('net');
 var len = 0;
 var args;
+var nameLogins = [];
 var password = require('../config.js');
 var version = "Alpha0.2";
 var log = function(data) {
@@ -170,20 +171,21 @@ net.createServer(function (socket) {
     });
     sockets.push(socket);
     socket.once('data', function(data) {
+        nameLogins[sockets.indexOf(socket)] = data;
         if (data === null) {
             socket.write('Goodbye.');
             socket.end();
         }
         else {
             if (!doesNameExist(data)) {
-                socket.write('It looks like that might be a new name. Would you like to register? (y/n)');
-                socket.once('data', function(data2) {
-                    if (data2 === 'y') {
-                        socket.write('Well then. Please enter a passcode.');
-                        socket.once('data', function(data3) {
-                            socket.write(register(data, socket, data3));
+                socket.write('It looks like that might be a new name. Would you like to register? (y/n)\n');
+                socket.once('data', function(data) {
+                    if (data === 'y') {
+                        socket.write('Well then. Please enter a passcode.\n');
+                        socket.once('data', function(data) {
+                            socket.write(register(nameLogins[sockets.indexOf(socket)], socket, data));
                             socket.write('Welcome to CreativeMUD.');
-                            startREPL()
+                            startREPL();
                         });
                     }
                     else {
@@ -197,7 +199,7 @@ net.createServer(function (socket) {
                     if (doesNameExist(data) !== 'Error') {
                         socket.write('Welcome back, '+data+'. What is your passcode?');
                             socket.once('data', function(data4) {
-                                login(data, socket, data4);
+                                login(nameLogins[sockets.indexOf(socket)], socket, data4);
                                 startREPL();
                             });
                     }

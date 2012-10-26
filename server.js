@@ -202,9 +202,6 @@ net.createServer(function (socket) {
             }
         }
     }
-    
-                
-        
     // DEPRECATED:
     // players[sockets.indexOf(socket)] = 'none';
     len = len + 1;

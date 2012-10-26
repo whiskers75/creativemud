@@ -183,6 +183,7 @@ net.createServer(function (socket) {
                         socket.once('data', function(data3) {
                             socket.write(register(data, socket, data3));
                             socket.write('Welcome to CreativeMUD.');
+                            startREPL()
                         });
                     }
                     else {
@@ -197,6 +198,7 @@ net.createServer(function (socket) {
                         socket.write('Welcome back, '+data+'. What is your passcode?');
                             socket.once('data', function(data4) {
                                 login(data, socket, data4);
+                                startREPL();
                             });
                     }
             }
@@ -206,51 +208,53 @@ net.createServer(function (socket) {
     // DEPRECATED:
     // players[sockets.indexOf(socket)] = 'none';
     len = len + 1;
-    socket.write(mkPrompt(players[sockets.indexOf(socket)]));
-    repl.start({
-        prompt: "", // Uses mkprompt() now
-        'input': socket,
-        'output': socket,
-        'writer': function(object) {
-            return object;
-        },
-        'eval': function(cmd, context, filename, callback) {
-            cmd = cmd.replace("\n)","").replace("(","");
-            // console.log(cmd);
-            args = cmd.split(" ");
-            // DEPRECATED:
-            //if (startsWith(cmd, 'login')) {
-            //    login(args[1], socket, args[2], function(data) {
-            //        callback(null, data);
-            //    });
-            //}
-            //if (startsWith(cmd, 'logout')) {
-            //    players[sockets.indexOf(socket)] = 'none';
-            //    callback(null, 'Logged out');
-            //}
-            //if (startsWith(cmd, 'register')) {
-            //    register(args[1], socket, args[2], function(data) {
-            //        callback(null, data);
-            //    });
-            //}
-            if (cmd === "look") {
-                callback(null, getAreaMetadata(getArea(players[sockets.indexOf(socket)]), 'title') + '\n' + getAreaMetadata(getArea(players[sockets.indexOf(socket)]), 'desc'));
-            }
-            if (cmd === "save") {
-                callback(null, 'Saves are automatic.');
-            }
-            if (cmd === "quit") {
-                socket.end();
-            }
-            if (cmd === "help") {
-                callback(null, 'Help\nLook with look\nQuit with quit');
-            }
-            // put new commands here...
-            socket.write(mkPrompt(players[sockets.indexOf(socket)]));
-    }}).on('exit', function() {
-        socket.end();
-        len = len - 1;
-    });
+    var startREPL = function() {
+        socket.write(mkPrompt(players[sockets.indexOf(socket)]));
+        repl.start({
+            prompt: "", // Uses mkprompt() now
+            'input': socket,
+            'output': socket,
+            'writer': function(object) {
+                return object;
+            },
+            'eval': function(cmd, context, filename, callback) {
+                cmd = cmd.replace("\n)","").replace("(","");
+                // console.log(cmd);
+                args = cmd.split(" ");
+                // DEPRECATED:
+                //if (startsWith(cmd, 'login')) {
+                //    login(args[1], socket, args[2], function(data) {
+                //        callback(null, data);
+                //    });
+                //}
+                //if (startsWith(cmd, 'logout')) {
+                //    players[sockets.indexOf(socket)] = 'none';
+                //    callback(null, 'Logged out');
+                //}
+                //if (startsWith(cmd, 'register')) {
+                //    register(args[1], socket, args[2], function(data) {
+                //        callback(null, data);
+                //    });
+                //}
+                if (cmd === "look") {
+                    callback(null, getAreaMetadata(getArea(players[sockets.indexOf(socket)]), 'title') + '\n' + getAreaMetadata(getArea(players[sockets.indexOf(socket)]), 'desc'));
+                }
+                if (cmd === "save") {
+                    callback(null, 'Saves are automatic.');
+                }
+                if (cmd === "quit") {
+                    socket.end();
+                }
+                if (cmd === "help") {
+                    callback(null, 'Help\nLook with look\nQuit with quit');
+                }
+                // put new commands here...
+                socket.write(mkPrompt(players[sockets.indexOf(socket)]));
+        }}).on('exit', function() {
+            socket.end();
+            len = len - 1;
+        });
+    };
 }).listen(5001);
 
 

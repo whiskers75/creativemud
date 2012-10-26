@@ -171,6 +171,7 @@ net.createServer(function (socket) {
     });
     sockets.push(socket);
     socket.once('data', function(data) {
+        console.log(data);
         nameLogins[sockets.indexOf(socket)] = data;
         if (data === null) {
             socket.write('Goodbye.');

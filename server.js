@@ -166,7 +166,11 @@ net.createServer(function (socket) {
     log('Socket '+sockets.indexOf[socket]+' connected.');
     readlines[sockets.indexOf(socket)] = rl.createInterface({
         input: socket,
-        output: socket
+        output: socket,
+        terminal: true
+    });
+    readlines[sockets.indexOf(socket)].on('SIGINT', function() {
+        socket.end();
     });
     readlines[sockets.indexOf(socket)].setPrompt('', 0);
     readlines[sockets.indexOf(socket)].write('Welcome to CreativeMUD, version '+version+'.\nThere are currently '+ len + ' players logged in.\nTo exit CreativeMUD, type \'.exit\'.\nIf CreativeMUD seems to freeze, type \'.break\'.\nType \'help\' for help.\n');

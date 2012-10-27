@@ -28,28 +28,35 @@ db.auth(password, function() { // For auth, comment out if not needed..
         process.exit(1);
     });
 });
-var getArea = function(player) {
-    db.get(player + ':area', function(err, res) {
+var getAttr = function(player, attr, callback) {
+    db.get(player + ':'+ attr, function(err, res) {
         if(err) {
-            return false;
+            callback(false);
         }
         else {
-            return res;
+            callback(res);
         }
     });
 };
-var setArea = function(player, area) {
-    db.set(player + ':area', area, function(err, res) {
+
+var setAttr = function(player, attr, val, callback) {
+    db.set(player + ':'+ attr, val, function(err, res) {
     if (err) {
-        return false;
+        callback(false);
     }
     if (!err) {
-        return true;
+        callback(true);
     }
     });
 };
 var init = function(player) {
-    setArea(player, '0');
+    setAttr(player, 'area', '0', function() {
+        setAttr(player, 'hp', '100', function() {
+            setAttr(player, 'maxHP', '100', function() {
+            setAttr(player, 'imm', 'false', function() {});
+            });
+        });
+    });
 };
 
 var getAreaMetadata = function(area, meta) {
@@ -108,7 +115,11 @@ var login = function(name, socket, passcode) {
 
 var mkPrompt = function(user) {
     // Prompt maker, will edit later
-    return 'CreativeMUD Beta0.1>';
+    getAttr(user, 'hp', function(hp) {
+        getAttr(user, 'maxHP', function(max) {
+            return 'C:'+hp+'/'+max+'>';
+        });
+    });
 };
 
 var register = function(name, socket, passcode) {
@@ -264,9 +275,12 @@ net.createServer(function (socket) {
                 //        callback(null, data);
                 //    });
                 //}
+                
+/* TO DO: FIX ME                
                 if (cmd === "look") {
                     callback(null, getAreaMetadata(getArea(players[sockets.indexOf(socket)]), 'title') + '\n' + getAreaMetadata(getArea(players[sockets.indexOf(socket)]), 'desc'));
                 }
+                */
                 /*if (cmd === "save") {
                     callback(null, 'Saves are automatic.');
                 }*/
@@ -277,6 +291,13 @@ net.createServer(function (socket) {
                 }
                 if (cmd === "help") {
                     callback(null, 'Help\nQuit with quit');
+                }
+                if (startsWith(cmd, "init")) {
+                    getAttr(players[sockets.indexOf(socket)], 'imm', function(imm) {
+                        if (imm == "true") {
+                            init(args[1]);
+                        }
+                    });
                 }
                 // put new commands here...
                 socket.write(mkPrompt(players[sockets.indexOf(socket)]));

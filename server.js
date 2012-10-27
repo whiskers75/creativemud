@@ -201,7 +201,7 @@ net.createServer(function (socket) {
                 log(answer+' does not exist, starting register on socket '+ sockets.indexOf(socket));
                 socket.pause();
                 socket.resume();
-                rl.question('', function() {});
+                readlines[sockets.indexOf(socket)].question('', function() {});
                 process.nextTick(function () {
                 readlines[sockets.indexOf(socket)].question('It looks like that is a new name, would you like to register? (y/n)\n', function(answer2) {
                     socket.pause();

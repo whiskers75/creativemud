@@ -166,6 +166,8 @@ net.createServer(function (socket) {
     sockets.push(socket);
     var streams = [];
     streams[sockets.indexOf(socket)] = new Stream();
+    streams[sockets.indexOf(socket)].readable = true;
+    streams[sockets.indexOf(socket)].setEncoding('utf-8');
     socket.on('connect', function(socket) {
         log('Socket '+sockets.indexOf(socket)+' connected.');
     });

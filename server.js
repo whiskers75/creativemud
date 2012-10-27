@@ -202,7 +202,8 @@ net.createServer(function (socket) {
                 socket.pause();
                 socket.resume();
                 process.nextTick(function () {
-                readlines[sockets.indexOf(socket)].question('It looks like that is a new name, would you like to register? (y/n)\n', function(answer2) {
+                readlines[sockets.indexOf(socket)].write('It looks like that is a new name, would you like to register? (y/n)\n');
+                readlines[sockets.indexOf(socket)].once('line', function(answer2) {
                     socket.pause();
                     answer2 = answer2.replace(/[\n\r]/g, '');
                     socket.resume();

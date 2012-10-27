@@ -13,7 +13,7 @@ var len = 0;
 var args;
 var nameLogins = [];
 var password = require('../config.js');
-var version = "Alpha0.2";
+var version = "Beta0.1";
 var readlines = [];
 var rl = require('readline');
 
@@ -108,7 +108,7 @@ var login = function(name, socket, passcode) {
 
 var mkPrompt = function(user) {
     // Prompt maker, will edit later
-    return 'CreativeMUD Alpha0.2>';
+    return 'CreativeMUD Beta0.1>';
 };
 
 var register = function(name, socket, passcode) {
@@ -170,8 +170,8 @@ net.createServer(function (socket) {
         socket.end();
     });
     readlines[sockets.indexOf(socket)].setPrompt('', 0);
-    readlines[sockets.indexOf(socket)].write('Welcome to CreativeMUD, version '+version+'.\nThere are currently '+ len + ' players logged in.\nTo exit CreativeMUD, type \'.exit\'.\nIf CreativeMUD seems to freeze, type \'.break\'.\nType \'help\' for help.\n');
-    readlines[sockets.indexOf(socket)].question('What is your name?\n', function(answer) {
+    socket.write('Welcome to CreativeMUD, version '+version+'.\nThere are currently '+ len + ' players logged in.\nTo exit CreativeMUD, type \'.exit\'.\nIf CreativeMUD seems to freeze, type \'.break\'.\nType \'help\' for help.\n');
+    readlines[sockets.indexOf(socket)].question('With what name do you go by in the realm of the Creative Multi User Dungeon?\n', function(answer) {
         answer = answer.replace(/[\n\r]/g, '');
         log('Checking '+answer+' for name existence');
         nameLogins[sockets.indexOf(socket)] = answer;
@@ -267,14 +267,16 @@ net.createServer(function (socket) {
                 if (cmd === "look") {
                     callback(null, getAreaMetadata(getArea(players[sockets.indexOf(socket)]), 'title') + '\n' + getAreaMetadata(getArea(players[sockets.indexOf(socket)]), 'desc'));
                 }
-                if (cmd === "save") {
+                /*if (cmd === "save") {
                     callback(null, 'Saves are automatic.');
-                }
+                }*/
                 if (cmd === "quit") {
+                    socket.write('Farewell.');
                     socket.end();
+                    socket.destroy();
                 }
                 if (cmd === "help") {
-                    callback(null, 'Help\nLook with look\nQuit with quit');
+                    callback(null, 'Help\nQuit with quit');
                 }
                 // put new commands here...
                 socket.write(mkPrompt(players[sockets.indexOf(socket)]));
@@ -284,7 +286,4 @@ net.createServer(function (socket) {
         });
     };
 }).listen(5001);
-
-
-
-
+// End CreativeMUD.

@@ -163,7 +163,18 @@ var register = function(name, socket, passcode) {
 
 net.createServer(function (socket) {
     sockets.push(socket);
-    log('Socket '+sockets.indexOf[socket]+' connected.');
+    socket.on('connect', function(socket) {
+        log('Socket '+sockets.indexOf(socket)+' connected.');
+    });
+    socket.setEncoding('utf-8');
+    socket.on('data', function(socket) {
+        socket.pause();
+        socket.resume();
+    });
+    socket.on('error', function(socket) {
+        socket.write('Error\n');
+        socket.end();
+    });
     readlines[sockets.indexOf(socket)] = rl.createInterface({
         input: socket,
         output: socket,

@@ -15,6 +15,7 @@ var password = require('../config.js');
 var version = "Alpha0.2";
 var readlines = [];
 var rl = require('readline');
+
 var log = function(data) {
     console.log(data);
     // Will add file logging later
@@ -178,7 +179,7 @@ net.createServer(function (socket) {
             // Do nothing
         }
         else {
-            streams[sockets.indexOf(socket)].stream.write(data);
+            streams[sockets.indexOf(socket)].write(data);
             
         }
     });
@@ -187,7 +188,7 @@ net.createServer(function (socket) {
         socket.end();
     });
     readlines[sockets.indexOf(socket)] = rl.createInterface({
-        input: streams[sockets.indexOf(socket)].stream,
+        input: streams[sockets.indexOf(socket)],
         output: socket
     });
     readlines[sockets.indexOf(socket)].on('SIGINT', function() {

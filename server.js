@@ -227,7 +227,8 @@ net.createServer(function (socket) {
             else {
                 if (doesNameExist(answer)) {
                     if (doesNameExist(answer) != 'Error') {
-                        readlines[sockets.indexOf(socket)].question('Welcome back, '+nameLogins[sockets.indexOf(socket)]+'. What is your password?\n', function(answer4) {
+                        socket.write('Welcome back, '+nameLogins[sockets.indexOf(socket)]+'. What is your password?\n');
+                        readlines[sockets.indexOf(socket)].once('line', function(answer4) {
                             answer4.replace(/[\n\r]/g, '');
                             log('Logging in '+sockets.indexOf(socket)+' as '+nameLogins[sockets.indexOf(socket)]);
                             if (login(nameLogins[sockets.indexOf(socket)], socket, answer4) === null) {

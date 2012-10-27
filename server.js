@@ -198,7 +198,7 @@ net.createServer(function (socket) {
             socket.end();
         }
         else {
-            if (!doesNameExist(answer)) {
+            if (doesNameExist(answer) !== true) {
                 log(answer+' does not exist, starting register on socket '+ sockets.indexOf(socket));
                 socket.pause();
                 socket.resume();

@@ -165,9 +165,11 @@ var register = function(name, socket, passcode) {
 net.createServer(function (socket) {
     sockets.push(socket);
     var streams = [];
-    streams[sockets.indexOf(socket)] = new net.Socket();
+    streams[sockets.indexOf(socket)] = new Stream();
     streams[sockets.indexOf(socket)].readable = true;
     streams[sockets.indexOf(socket)].writable = true;
+    streams[sockets.indexOf(socket)].pause = function() {}
+    streams[sockets.indexOf(socket)].resume = function() {}
     socket.on('connect', function(socket) {
         log('Socket '+sockets.indexOf(socket)+' connected.');
     });

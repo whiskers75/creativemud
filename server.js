@@ -198,13 +198,13 @@ net.createServer(function (socket) {
         else {
             if (!doesNameExist(answer)) {
                 log(answer+' does not exist, starting register on socket '+ sockets.indexOf(socket));
-                readlines[sockets.indexOf(socket)].question('It looks like that is a new name, would you like to register? (y/n)\n', function(answer) {
-                    answer.replace(/\n$/, '');
-                    if (answer === 'y') {
-                        readlines[sockets.indexOf(socket)].question('Good! Please enter a password.\n', function(answer) {
-                            answer.replace(/\n$/, '');
+                readlines[sockets.indexOf(socket)].question('It looks like that is a new name, would you like to register? (y/n)\n', function(answer2) {
+                    answer2.replace(/\n$/, '');
+                    if (answer2 === 'y') {
+                        readlines[sockets.indexOf(socket)].question('Good! Please enter a password.\n', function(answer3) {
+                            answer3.replace(/\n$/, '');
                             log('Registering '+sockets.indexOf(socket)+'.');
-                            readlines[sockets.indexOf(socket)].write(register(nameLogins[sockets.indexOf(socket)], socket, answer));
+                            readlines[sockets.indexOf(socket)].write(register(nameLogins[sockets.indexOf(socket)], socket, answer3));
                             log('Registered '+sockets.indexOf(socket)+'.');
                             readlines[sockets.indexOf(socket)].write('Welcome to CreativeMUD.\n');
                             startREPL();
@@ -219,15 +219,15 @@ net.createServer(function (socket) {
             else {
                 if (doesNameExist(answer)) {
                     if (doesNameExist(answer) != 'Error') {
-                        readlines[sockets.indexOf(socket)].question('Welcome back, '+nameLogins[sockets.indexOf(socket)]+'. What is your password?\n', function(answer) {
-                            answer.replace(/\n$/, '');
+                        readlines[sockets.indexOf(socket)].question('Welcome back, '+nameLogins[sockets.indexOf(socket)]+'. What is your password?\n', function(answer4) {
+                            answer4.replace(/\n$/, '');
                             log('Logging in '+sockets.indexOf(socket)+' as '+nameLogins[sockets.indexOf(socket)]);
-                            if (login(nameLogins[sockets.indexOf(socket)], socket, answer) === null) {
+                            if (login(nameLogins[sockets.indexOf(socket)], socket, answer4) === null) {
                                 readlines[sockets.indexOf(socket)].write('Wrong password, or password error.\n');
                                 socket.end();
                             }
                             else {
-                                readlines[sockets.indexOf(socket)].write(login(nameLogins[sockets.indexOf(socket)], socket, answer));
+                                readlines[sockets.indexOf(socket)].write(login(nameLogins[sockets.indexOf(socket)], socket, answer4));
                                 startREPL();
                             }
                         });  

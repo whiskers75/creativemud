@@ -167,11 +167,11 @@ net.createServer(function (socket) {
         log('Socket '+sockets.indexOf(socket)+' connected.');
     });
     socket.setEncoding('utf-8');
-    socket.on('data', function(socket) {
+    socket.on('data', function() {
         socket.pause();
         socket.resume();
     });
-    socket.on('error', function(socket) {
+    socket.on('error', function() {
         socket.write('Error\n');
         socket.end();
     });

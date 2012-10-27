@@ -2,6 +2,7 @@
 // Licenced under the GPLv2.
 
 var sockets = [];
+var Stream = require('stream');
 var redis = require('redis');
 var db = redis.createClient(9033, 'sole.redistogo.com'); 
 var players = [];
@@ -163,20 +164,29 @@ var register = function(name, socket, passcode) {
 
 net.createServer(function (socket) {
     sockets.push(socket);
+    var streams = [];
+    streams[sockets.indexOf(socket)] = new Stream();
+    streams[sockets.indexOf(socket)].setEncoding('utf-8');
     socket.on('connect', function(socket) {
         log('Socket '+sockets.indexOf(socket)+' connected.');
     });
     socket.setEncoding('utf-8');
-    socket.on('data', function() {
-        socket.pause();
-        socket.resume();
+    socket.on('data', function(data) {
+        data = data.replace(/[\n\r]/g, '');
+        if (data === '') {
+            // Do nothing
+        }
+        else {
+            streams[sockets.indexOf(socket)].write(data);
+            
+        }
     });
     socket.on('error', function() {
         socket.write('Error\n');
         socket.end();
     });
     readlines[sockets.indexOf(socket)] = rl.createInterface({
-        input: socket,
+        input: streams[sockets.indexOf(socket)],
         output: socket,
         terminal: true
     });

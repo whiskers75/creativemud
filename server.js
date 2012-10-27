@@ -187,7 +187,7 @@ net.createServer(function (socket) {
     readlines[sockets.indexOf(socket)].setPrompt('', 0);
     readlines[sockets.indexOf(socket)].write('Welcome to CreativeMUD, version '+version+'.\nThere are currently '+ len + ' players logged in.\nTo exit CreativeMUD, type \'.exit\'.\nIf CreativeMUD seems to freeze, type \'.break\'.\nType \'help\' for help.\n');
     readlines[sockets.indexOf(socket)].question('What is your name?\n', function(answer) {
-        answer.replace(/[\n\r]/g, '');
+        answer = answer.replace(/[\n\r]/g, '');
         log('Checking '+answer+' for name existence');
         nameLogins[sockets.indexOf(socket)] = answer;
         if (answer === '') {

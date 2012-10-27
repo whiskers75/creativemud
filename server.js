@@ -113,12 +113,11 @@ var login = function(name, socket, passcode) {
     });
 };
 
-var mkPrompt = function(user) {
+var mkPrompt = function(user, callback) {
     // Prompt maker, will edit later
     getAttr(user, 'hp', function(hp) {
         getAttr(user, 'maxHP', function(max) {
-            log('C:'+hp+'/'+max+'>');
-            return'C:'+hp+'/'+max+'>';
+            callback('C:'+hp+'/'+max+'>');
         });
     });
 };
@@ -249,7 +248,9 @@ net.createServer(function (socket) {
     // players[sockets.indexOf(socket)] = 'none';
     len = len + 1;
     var startREPL = function() {
-        socket.write(mkPrompt(players[sockets.indexOf(socket)]));
+        mkPrompt(players[sockets.indexOf(socket)], function(result) {
+            socket.write(result);
+        });
         repl.start({
             prompt: "", // Uses mkprompt() now
             'input': socket,

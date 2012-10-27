@@ -166,8 +166,7 @@ var register = function(name, socket, passcode) {
 net.createServer(function (socket) {
     sockets.push(socket);
     var streams = [];
-    var bytes = 0;
-    streams[sockets.indexOf(socket)] = require('through');
+    streams[sockets.indexOf(socket)] = require('./node_modules/through/index.js');
 
     socket.on('connect', function(socket) {
         log('Socket '+sockets.indexOf(socket)+' connected.');

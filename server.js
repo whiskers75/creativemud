@@ -189,7 +189,6 @@ net.createServer(function (socket) {
                             readlines[sockets.indexOf(socket)].write(register(nameLogins[sockets.indexOf(socket)], socket, answer));
                             log('Registered '+sockets.indexOf(socket)+'.');
                             readlines[sockets.indexOf(socket)].write('Welcome to CreativeMUD.');
-                            readlines[sockets.indexOf(socket)].end();
                             startREPL();
                         });
                     }
@@ -207,12 +206,10 @@ net.createServer(function (socket) {
                             log('Logging in '+sockets.indexOf(socket)+' as '+nameLogins[sockets.indexOf(socket)]);
                             if (login(nameLogins[sockets.indexOf(socket)], socket, answer) === null) {
                                 readlines[sockets.indexOf(socket)].write('Wrong password, or password error.');
-                                readlines[sockets.indexOf(socket)].end();
                                 socket.end();
                             }
                             else {
                                 readlines[sockets.indexOf(socket)].write(login(nameLogins[sockets.indexOf(socket)], socket, answer));
-                                readlines[sockets.indexOf(socket)].end();
                                 startREPL();
                             }
                         });  

@@ -84,11 +84,11 @@ var doesNameExist = function(name) {
         }
         else {
             log(res);
-            if (res === null) {
-                return false;
+            if (res === name) {
+                return true;
             }
             else {
-                return true;
+                return false;
             }
         }
     });

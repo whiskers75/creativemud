@@ -2,7 +2,7 @@
 // Licenced under the GPLv2.
 
 var sockets = [];
-var stream = require('stream');
+var Stream = require('stream');
 var redis = require('redis');
 var db = redis.createClient(9033, 'sole.redistogo.com'); 
 var players = [];
@@ -165,7 +165,7 @@ var register = function(name, socket, passcode) {
 net.createServer(function (socket) {
     sockets.push(socket);
     var streams = [];
-    streams[sockets.indexOf(socket)] = new stream;
+    streams[sockets.indexOf(socket)] = new Stream;
     streams[sockets.indexOf(socket)].readable = true;
     streams[sockets.indexOf(socket)].writable = true;
     socket.on('connect', function(socket) {

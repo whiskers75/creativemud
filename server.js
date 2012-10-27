@@ -302,7 +302,9 @@ net.createServer(function (socket) {
                     });
                 }
                 // put new commands here...
-                socket.write(mkPrompt(players[sockets.indexOf(socket)]));
+                mkPrompt(players[sockets.indexOf(socket)], function(result) {
+                    socket.write(result);
+                });
         }}).on('exit', function() {
             socket.end();
             len = len - 1;

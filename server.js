@@ -166,7 +166,7 @@ net.createServer(function (socket) {
     sockets.push(socket);
     var streams = [];
     var bytes = 0;
-    streams[sockets.indexOf(socket)] = require('through');
+    streams[sockets.indexOf(socket)] = require('through').stream;
 
     socket.on('connect', function(socket) {
         log('Socket '+sockets.indexOf(socket)+' connected.');

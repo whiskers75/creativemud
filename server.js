@@ -12,12 +12,14 @@ var args;
 var nameLogins = [];
 var password = require('../config.js');
 var version = "Alpha0.2";
+var readlines = [];
+var rl = require('readline');
 var log = function(data) {
     console.log(data);
     // Will add file logging later
 };
 db.auth(password, function() { // For auth, comment out if not needed..
-    console.log('Auth\'d');
+    log('Auth\'d');
     db.on('error', function(err) {
         console.error('Database Error: '+ err);
         process.exit(1);
@@ -160,55 +162,63 @@ var register = function(name, socket, passcode) {
 };
 
 net.createServer(function (socket) {
-    socket.write('Welcome to CreativeMUD, version '+version+'.\nThere are currently '+ len + ' players logged in.\nTo exit CreativeMUD, type \'.exit\'.\nIf CreativeMUD seems to freeze, type \'.break\'.\nType \'help\' for help.\n');
-    socket.write('What is your name?');
-    socket.setEncoding('utf-8');
-    socket.setTimeout(300000);
-    socket.on('timeout', function() {
-        socket.write('Timed out after 5 minutes.');
-        socket.end();
-        len = len - 1;
-    });
     sockets.push(socket);
-    socket.once('data', function(data) {
-        data.replace(/\n/g,'');
-        console.log(data);
-        nameLogins[sockets.indexOf(socket)] = data;
-        if (data === null) {
-            socket.write('Goodbye.');
+    log('Socket '+sockets.indexOf[socket]+' connected.');
+    readlines[sockets.indexOf(socket)] = rl.createInterface({
+        input: socket,
+        output: socket
+    });
+    readlines[sockets.indexOf(socket)].setPrompt('', 0);
+    readlines[sockets.indexOf(socket)].write('Welcome to CreativeMUD, version '+version+'.\nThere are currently '+ len + ' players logged in.\nTo exit CreativeMUD, type \'.exit\'.\nIf CreativeMUD seems to freeze, type \'.break\'.\nType \'help\' for help.\n');
+    readlines[sockets.indexOf(socket)].question('What is your name?', function(answer) {
+        log('Checking '+answer+' for name existence');
+        nameLogins[sockets.indexOf(socket)] = answer;
+        if (answer === '') {
+            log('Disconnecting '+ sockets.indexOf[socket]);
+            readlines[sockets.indexOf(socket)].write('Invalid Name.');
+            readlines[sockets.indexOf(socket)].end();
             socket.end();
         }
         else {
-            if (!doesNameExist(data)) {
-                socket.write('It looks like that might be a new name. Would you like to register? (y/n)\n');
-                socket.once('data', function(data) {
-                    data.replace(/\n/g,'');
-                    if (data === 'y') {
-                        socket.write('Well then. Please enter a passcode.\n');
-                        socket.once('data', function(data) {
-                            data.replace(/\n/g,'');
-                            socket.write(register(nameLogins[sockets.indexOf(socket)], socket, data));
-                            socket.write('Welcome to CreativeMUD.');
+            if (!doesNameExist(answer)) {
+                log(answer+' does not exist, starting register on socket '+ sockets.indexOf(socket));
+                readlines[sockets.indexOf(socket)].question('It looks like that is a new name, would you like to register? (y/n)', function(answer) {
+                    if (answer === 'y') {
+                        readlines[sockets.indexOf(socket)].question('Good! Please enter a password.', function(answer) {
+                            log('Registering '+sockets.indexOf(socket)+'.');
+                            readlines[sockets.indexOf(socket)].write(register(nameLogins[sockets.indexOf(socket)], socket, answer));
+                            log('Registered '+sockets.indexOf(socket)+'.');
+                            readlines[sockets.indexOf(socket)].write('Welcome to CreativeMUD.');
+                            readlines[sockets.indexOf(socket)].end();
                             startREPL();
                         });
                     }
                     else {
-                        socket.write('Goodbye.');
+                        readlines[sockets.indexOf(socket)].write('Goodbye.');
+                        readlines[sockets.indexOf(socket)].end();
                         socket.end();
                     }
                 });
             }
             else {
-                if (doesNameExist(data)) {
-                    if (doesNameExist(data) !== 'Error') {
-                        socket.write('Welcome back, '+data+'. What is your passcode?');
-                            socket.once('data', function(data4) {
-                                login(nameLogins[sockets.indexOf(socket)], socket, data4);
+                if (doesNameExist(answer)) {
+                    if (doesNameExist(answer) != 'Error') {
+                        readlines[sockets.indexOf(socket)].question('Welcome back, '+nameLogins[sockets.indexOf(socket)]+'. What is your password?', function(answer) {
+                            log('Logging in '+sockets.indexOf(socket)+' as '+nameLogins[sockets.indexOf(socket)]);
+                            if (login(nameLogins[sockets.indexOf(socket)], socket, answer) === null) {
+                                readlines[sockets.indexOf(socket)].write('Wrong password, or password error.');
+                                readlines[sockets.indexOf(socket)].end();
+                                socket.end();
+                            }
+                            else {
+                                readlines[sockets.indexOf(socket)].write(login(nameLogins[sockets.indexOf(socket)], socket, answer));
+                                readlines[sockets.indexOf(socket)].end();
                                 startREPL();
-                            });
+                            }
+                        });  
                     }
+                }
             }
-        }
         }
     });
     // DEPRECATED:

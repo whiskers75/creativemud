@@ -79,18 +79,7 @@ var startsWith = function (superstr, str) {
 };
 var doesNameExist = function(name) {
     db.get(name + ':name', function(err,res) {
-        if (err) {
-            return 'Error';
-        }
-        else {
-            log(res);
-            if (res === null) {
-                return false;
-            }
-            else {
-                return true;
-            }
-        }
+        return res;
     });
 };
 
@@ -198,7 +187,7 @@ net.createServer(function (socket) {
             socket.end();
         }
         else {
-            if (doesNameExist(answer) !== true) {
+            if (doesNameExist(answer) !== answer) {
                 log(answer+' does not exist, starting register on socket '+ sockets.indexOf(socket));
                 socket.pause();
                 socket.resume();
@@ -226,7 +215,7 @@ net.createServer(function (socket) {
                 });
             }
             else {
-                if (doesNameExist(answer)) {
+                if (doesNameExist(answer) === answer) {
                     if (doesNameExist(answer) != 'Error') {
                         socket.write('Welcome back, '+nameLogins[sockets.indexOf(socket)]+'. What is your password?\n');
                         readlines[sockets.indexOf(socket)].once('line', function(answer4) {

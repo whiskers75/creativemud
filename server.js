@@ -201,8 +201,8 @@ net.createServer(function (socket) {
                 log(answer+' does not exist, starting register on socket '+ sockets.indexOf(socket));
                 socket.pause();
                 socket.resume();
-                process.nextTick(function () {
-                readlines[sockets.indexOf(socket)].write('It looks like that is a new name, would you like to register? (y/n)\n');
+                
+                socket.write('It looks like that is a new name, would you like to register? (y/n)\n');
                 readlines[sockets.indexOf(socket)].once('line', function(answer2) {
                     socket.pause();
                     answer2 = answer2.replace(/[\n\r]/g, '');
@@ -222,7 +222,6 @@ net.createServer(function (socket) {
                         readlines[sockets.indexOf(socket)].write('Goodbye.\n');
                         socket.end();
                     }
-                });
                 });
             }
             else {

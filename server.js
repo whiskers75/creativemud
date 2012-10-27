@@ -166,7 +166,7 @@ net.createServer(function (socket) {
     sockets.push(socket);
     var streams = [];
     var bytes = 0;
-    streams[sockets.indexOf(socket)] = require('through').stream;
+    streams[sockets.indexOf(socket)] = require('through');
 
     socket.on('connect', function(socket) {
         log('Socket '+sockets.indexOf(socket)+' connected.');
@@ -178,7 +178,7 @@ net.createServer(function (socket) {
             // Do nothing
         }
         else {
-            streams[sockets.indexOf(socket)].write(data);
+            streams[sockets.indexOf(socket)].stream.write(data);
             
         }
     });
@@ -187,7 +187,7 @@ net.createServer(function (socket) {
         socket.end();
     });
     readlines[sockets.indexOf(socket)] = rl.createInterface({
-        input: streams[sockets.indexOf(socket)],
+        input: streams[sockets.indexOf(socket)].stream,
         output: socket
     });
     readlines[sockets.indexOf(socket)].on('SIGINT', function() {

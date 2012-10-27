@@ -83,6 +83,7 @@ var doesNameExist = function(name) {
             return 'Error';
         }
         else {
+            log(res);
             if (res === null) {
                 return false;
             }

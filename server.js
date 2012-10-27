@@ -173,22 +173,12 @@ net.createServer(function (socket) {
         log('Socket '+sockets.indexOf(socket)+' connected.');
     });
     socket.setEncoding('utf-8');
-    socket.on('data', function(data) {
-        data = data.replace(/[\n\r]/g, '');
-        if (data === '') {
-            // Do nothing
-        }
-        else {
-            streams[sockets.indexOf(socket)].write(data);
-            
-        }
-    });
     socket.on('error', function() {
         socket.write('Error\n');
         socket.end();
     });
     readlines[sockets.indexOf(socket)] = rl.createInterface({
-        input: streams[sockets.indexOf(socket)],
+        input: socket,
         output: socket
     });
     readlines[sockets.indexOf(socket)].on('SIGINT', function() {
@@ -211,6 +201,7 @@ net.createServer(function (socket) {
                 log(answer+' does not exist, starting register on socket '+ sockets.indexOf(socket));
                 socket.pause();
                 socket.resume();
+                rl.question('', function() {});
                 process.nextTick(function () {
                 readlines[sockets.indexOf(socket)].question('It looks like that is a new name, would you like to register? (y/n)\n', function(answer2) {
                     socket.pause();

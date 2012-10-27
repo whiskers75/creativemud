@@ -117,7 +117,8 @@ var mkPrompt = function(user) {
     // Prompt maker, will edit later
     getAttr(user, 'hp', function(hp) {
         getAttr(user, 'maxHP', function(max) {
-            return 'C:'+hp+'/'+max+'>';
+            log('C:'+hp+'/'+max+'>');
+            return'C:'+hp+'/'+max+'>';
         });
     });
 };

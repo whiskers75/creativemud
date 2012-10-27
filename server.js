@@ -174,30 +174,31 @@ net.createServer(function (socket) {
     });
     readlines[sockets.indexOf(socket)].setPrompt('', 0);
     readlines[sockets.indexOf(socket)].write('Welcome to CreativeMUD, version '+version+'.\nThere are currently '+ len + ' players logged in.\nTo exit CreativeMUD, type \'.exit\'.\nIf CreativeMUD seems to freeze, type \'.break\'.\nType \'help\' for help.\n');
-    readlines[sockets.indexOf(socket)].question('What is your name?', function(answer) {
+    readlines[sockets.indexOf(socket)].question('What is your name?\n', function(answer) {
+        answer.replace('\n', '');
         log('Checking '+answer+' for name existence');
         nameLogins[sockets.indexOf(socket)] = answer;
         if (answer === '') {
             log('Disconnecting '+ sockets.indexOf[socket]);
-            readlines[sockets.indexOf(socket)].write('Invalid Name.');
+            readlines[sockets.indexOf(socket)].write('Invalid Name.\n');
             readlines[sockets.indexOf(socket)].end();
             socket.end();
         }
         else {
             if (!doesNameExist(answer)) {
                 log(answer+' does not exist, starting register on socket '+ sockets.indexOf(socket));
-                readlines[sockets.indexOf(socket)].question('It looks like that is a new name, would you like to register? (y/n)', function(answer) {
+                readlines[sockets.indexOf(socket)].question('It looks like that is a new name, would you like to register? (y/n)\n', function(answer) {
                     if (answer === 'y') {
-                        readlines[sockets.indexOf(socket)].question('Good! Please enter a password.', function(answer) {
+                        readlines[sockets.indexOf(socket)].question('Good! Please enter a password.\n', function(answer) {
                             log('Registering '+sockets.indexOf(socket)+'.');
                             readlines[sockets.indexOf(socket)].write(register(nameLogins[sockets.indexOf(socket)], socket, answer));
                             log('Registered '+sockets.indexOf(socket)+'.');
-                            readlines[sockets.indexOf(socket)].write('Welcome to CreativeMUD.');
+                            readlines[sockets.indexOf(socket)].write('Welcome to CreativeMUD.\n');
                             startREPL();
                         });
                     }
                     else {
-                        readlines[sockets.indexOf(socket)].write('Goodbye.');
+                        readlines[sockets.indexOf(socket)].write('Goodbye.\n');
                         socket.end();
                     }
                 });
@@ -205,10 +206,10 @@ net.createServer(function (socket) {
             else {
                 if (doesNameExist(answer)) {
                     if (doesNameExist(answer) != 'Error') {
-                        readlines[sockets.indexOf(socket)].question('Welcome back, '+nameLogins[sockets.indexOf(socket)]+'. What is your password?', function(answer) {
+                        readlines[sockets.indexOf(socket)].question('Welcome back, '+nameLogins[sockets.indexOf(socket)]+'. What is your password?\n', function(answer) {
                             log('Logging in '+sockets.indexOf(socket)+' as '+nameLogins[sockets.indexOf(socket)]);
                             if (login(nameLogins[sockets.indexOf(socket)], socket, answer) === null) {
-                                readlines[sockets.indexOf(socket)].write('Wrong password, or password error.');
+                                readlines[sockets.indexOf(socket)].write('Wrong password, or password error.\n');
                                 socket.end();
                             }
                             else {

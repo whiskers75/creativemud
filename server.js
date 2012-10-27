@@ -187,7 +187,7 @@ net.createServer(function (socket) {
             socket.end();
         }
         else {
-            if (doesNameExist(answer) !== answer) {
+            if (doesNameExist(readlines[sockets.indexOf(socket)]) !== answer) {
                 log(answer+' does not exist, starting register on socket '+ sockets.indexOf(socket));
                 socket.pause();
                 socket.resume();
@@ -215,8 +215,8 @@ net.createServer(function (socket) {
                 });
             }
             else {
-                if (doesNameExist(answer) === answer) {
-                    if (doesNameExist(answer) != 'Error') {
+                if (doesNameExist(readlines[sockets.indexOf(socket)]) === answer) {
+                    if (doesNameExist(readlines[sockets.indexOf(socket)]) != 'Error') {
                         socket.write('Welcome back, '+nameLogins[sockets.indexOf(socket)]+'. What is your password?\n');
                         readlines[sockets.indexOf(socket)].once('line', function(answer4) {
                             answer4.replace(/[\n\r]/g, '');

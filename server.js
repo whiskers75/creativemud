@@ -170,6 +170,20 @@ net.createServer(function (socket) {
     streams[sockets.indexOf(socket)].writable = true;
     streams[sockets.indexOf(socket)].pause = function() {}
     streams[sockets.indexOf(socket)].resume = function() {}
+    streams[sockets.indexOf(socket)].write = function (buf) {
+    bytes += buf.length;
+    };
+
+    streams[sockets.indexOf(socket)].end = function (buf) {
+    if (arguments.length) s.write(buf);
+
+    streams[sockets.indexOf(socket)].writable = false;
+    console.log(bytes + ' bytes written');
+    };
+
+    streams[sockets.indexOf(socket)].destroy = function () {
+        streams[sockets.indexOf(socket)].writable = false;
+    };
     socket.on('connect', function(socket) {
         log('Socket '+sockets.indexOf(socket)+' connected.');
     });

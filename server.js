@@ -182,7 +182,7 @@ net.createServer(function (socket) {
             socket.end();
         }
         else {
-            db.get(name + ':name', function(err,res) {
+            db.get(answer + ':name', function(err,res) {
                 answer = res;
                 if (answer === null) {
                 log(answer+' does not exist, starting register on socket '+ sockets.indexOf(socket));

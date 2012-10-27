@@ -200,6 +200,7 @@ net.createServer(function (socket) {
                 log(answer+' does not exist, starting register on socket '+ sockets.indexOf(socket));
                 readlines[sockets.indexOf(socket)].question('It looks like that is a new name, would you like to register? (y/n)\n', function(answer2) {
                     answer2.replace(/\n$/, '');
+                    log(answer2);
                     if (answer2 === 'y') {
                         readlines[sockets.indexOf(socket)].question('Good! Please enter a password.\n', function(answer3) {
                             answer3.replace(/\n$/, '');

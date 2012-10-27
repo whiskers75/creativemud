@@ -299,6 +299,9 @@ net.createServer(function (socket) {
                         if (imm == "true") {
                             init(args[1]);
                         }
+                        if (imm === "false") {
+                            callback(null, 'Nice try, mere mortal!');
+                        }
                     });
                 }
                 // put new commands here...

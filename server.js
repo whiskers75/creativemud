@@ -167,7 +167,7 @@ var register = function(name, socket, passcode) {
 net.createServer(function (socket) {
     sockets.push(socket);
     var streams = [];
-    streams[sockets.indexOf(socket)] = stream;
+    streams[sockets.indexOf(socket)] = require('through');
 
     socket.on('connect', function(socket) {
         log('Socket '+sockets.indexOf(socket)+' connected.');

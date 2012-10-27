@@ -194,7 +194,6 @@ net.createServer(function (socket) {
                     }
                     else {
                         readlines[sockets.indexOf(socket)].write('Goodbye.');
-                        readlines[sockets.indexOf(socket)].end();
                         socket.end();
                     }
                 });

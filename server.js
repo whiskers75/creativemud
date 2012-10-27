@@ -181,7 +181,7 @@ net.createServer(function (socket) {
             readlines[sockets.indexOf(socket)].end();
             socket.end();
         }
-        else {
+        else { // LOGIN WORKS
             db.get(answer + ':name', function(err,res) {
                 answer = res;
                 if (answer === null) {

@@ -77,11 +77,6 @@ var setAreaMetadata = function(area, meta, val) {
 var startsWith = function (superstr, str) {
   return !superstr.indexOf(str);
 };
-var doesNameExist = function(name) {
-    db.get(name + ':name', function(err,res) {
-        return res;
-    });
-};
 
 var login = function(name, socket, passcode) { 
     db.get(name + ':name', function(err, res) {
@@ -187,7 +182,9 @@ net.createServer(function (socket) {
             socket.end();
         }
         else {
-            if (doesNameExist(readlines[sockets.indexOf(socket)]) !== answer) {
+            db.get(name + ':name', function(err,res) {
+                answer = res;
+                if (answer === null) {
                 log(answer+' does not exist, starting register on socket '+ sockets.indexOf(socket));
                 socket.pause();
                 socket.resume();
@@ -215,8 +212,8 @@ net.createServer(function (socket) {
                 });
             }
             else {
-                if (doesNameExist(readlines[sockets.indexOf(socket)]) === answer) {
-                    if (doesNameExist(readlines[sockets.indexOf(socket)]) != 'Error') {
+                if (answer == nameLogins[sockets.indexOf(socket)]) {
+                    if (answer != 'Error') {
                         socket.write('Welcome back, '+nameLogins[sockets.indexOf(socket)]+'. What is your password?\n');
                         readlines[sockets.indexOf(socket)].once('line', function(answer4) {
                             answer4.replace(/[\n\r]/g, '');
@@ -233,6 +230,7 @@ net.createServer(function (socket) {
                     }
                 }
             }
+            });   
         }
     });
     // DEPRECATED:

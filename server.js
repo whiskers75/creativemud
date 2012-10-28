@@ -319,7 +319,7 @@ net.createServer(function (socket) {
                 }
                 if (cmd === "who") {
                     callback(null, 'People Count: '+len);
-                    
+                }
                 if (cmd === "help") {
                     callback(null, 'Help\nLook with look\nMove with move\nQuit with quit');
                     mkPrompt(players[sockets.indexOf(socket)], function(result) {

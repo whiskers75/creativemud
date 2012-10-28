@@ -4,14 +4,6 @@
 
 var sockets = [];
 var fs = require('fs');
-var colorize = require('colorize');
-fs.readFile('./motd.txt', 'utf8', function(err, data) {
-    if (err) {
-        console.log('CANNOT READ MOTD!');
-        process.exit(1);
-    }
-    var motd = colorize.ansify(data);
-});
 var Stream = require('stream');
 var redis = require('redis');
 var db = redis.createClient(9176, 'koi.redistogo.com'); 
@@ -190,7 +182,14 @@ net.createServer(function (socket) {
         socket.end();
     });
     readlines[sockets.indexOf(socket)].setPrompt('', 0);
-    socket.write(motd);
+    var colorize = require('colorize');
+    fs.readFile('./motd.txt', 'utf8', function(err, data) {
+        if (err) {
+            console.log('CANNOT READ MOTD!');
+            process.exit(1);
+        }
+        socket.write(colorize.ansify(data));
+    });
     readlines[sockets.indexOf(socket)].question('With what name do you go by in the realm of the Creative Multi User Dungeon?\n', function(answer) {
         answer = answer.replace(/[\n\r]/g, '');
         log('Checking '+answer+' for name existence');

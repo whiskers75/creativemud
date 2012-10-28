@@ -261,6 +261,11 @@ net.createServer(function (socket) {
     // players[sockets.indexOf(socket)] = 'none';
     len = len + 1;
     var startREPL = function() {
+        setTimeout(function() {
+        mkPrompt(players[sockets.indexOf(socket)], function(result) {
+        socket.write(result);
+        });
+        }, 1000);
         repl.start({
             prompt: "", // Uses mkprompt() now
             'input': socket,

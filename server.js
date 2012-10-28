@@ -104,7 +104,9 @@ var login = function(name, socket, passcode) {
                         return 'Logged in as: ' + players[sockets.indexOf(socket)];
                     }
                     else {
-                        
+                        socket.write('Wrong Password.');
+                        socket.end();
+                        socket.destroy();
                     }
                 }
                 else {

@@ -279,7 +279,7 @@ net.createServer(function (socket) {
                 //}
                               
                 if (cmd === "look") {
-                    getAttr(sockets.indexOf(socket), 'area',  function(area) {
+                    getAttr(players[sockets.indexOf(socket)], 'area',  function(area) {
                         getAttr('area_'+area, 'title', function(title) {
                             getAttr('area_'+area, 'desc', function(desc) {
                                 callback(null, title+'\n'+desc);

@@ -121,7 +121,7 @@ var mkPrompt = function(user, callback) {
     // Prompt maker, will edit later
     getAttr(user, 'hp', function(hp) {
         getAttr(user, 'maxHP', function(max) {
-            callback(colorize.ansify('#green['+user+']:#red['+hp+']/'+max+'HP>'));
+            callback(colorize.ansify('#green['+user+'] #red['+hp+']/'+max+'HP>'));
         });
     });
 };
@@ -261,7 +261,6 @@ net.createServer(function (socket) {
     // players[sockets.indexOf(socket)] = 'none';
     len = len + 1;
     var startREPL = function() {
-        
         setTimeout(function() {
         mkPrompt(players[sockets.indexOf(socket)], function(result) {
         socket.write(result);
@@ -319,6 +318,9 @@ net.createServer(function (socket) {
                 }
                 if (cmd === "who") {
                     callback(null, 'People Count: '+len);
+                    mkPrompt(players[sockets.indexOf(socket)], function(result) {
+                        socket.write(result);
+                    });
                 }
                 if (cmd === "help") {
                     callback(null, 'Help\nLook with look\nMove with move\nQuit with quit');
@@ -338,6 +340,9 @@ net.createServer(function (socket) {
                             getAttr('area_'+area, args[1], function(moved_to) {
                                 if (moved_to === null) {
                                     callback (null, 'You cannot go that way.');
+                                    getAttr('area_' + area, 'exits', function(exits) {
+                                        callback(null,'Current '+ exits);
+                                    });
                                     mkPrompt(players[sockets.indexOf(socket)], function(result) {
                                         socket.write(result);
                                     });

@@ -317,14 +317,14 @@ net.createServer(function (socket) {
                     socket.destroy();
                 }
                 if (cmd === "help") {
-                    callback(null, 'Help\nLook with look\nQuit with quit');
+                    callback(null, 'Help\nLook with look\nMove with move\nQuit with quit');
                     mkPrompt(players[sockets.indexOf(socket)], function(result) {
                         socket.write(result);
                     });
                 }
                 if (startsWith(cmd, "move")) {
                     if (args[1] === "") {
-                        callback(null, 'Usage: move (n/e/s/w/up/down)');
+                        callback(null, 'Usage: move (direction)');
                         mkPrompt(players[sockets.indexOf(socket)], function(result) {
                             socket.write(result);
                         });
@@ -336,6 +336,24 @@ net.createServer(function (socket) {
                                     callback (null, 'You cannot go that way.');
                                     mkPrompt(players[sockets.indexOf(socket)], function(result) {
                                         socket.write(result);
+                                    });
+                                }
+                                else {
+                                    setAttr(players[sockets.indexOf(socket)], 'area', moved_to, function(suc) {
+                                        if (suc === true) {
+                                            getAttr(players[sockets.indexOf(socket)], 'area', function(area) {
+                                                getAttr('area_' + area, 'title', function(title) {
+                                                    getAttr('area_' + area, 'desc', function(desc) {
+                                                        getAttr('area_' + area, 'exits', function(exits) {
+                                                            callback(null, title + '\n' + desc + '\n' + exits);
+                                                            mkPrompt(players[sockets.indexOf(socket)], function(result) {
+                                                                socket.write(result);
+                                                            });
+                                                        });
+                                                    });
+                                                });
+                                            });
+                                        }
                                     });
                                 }
                             });

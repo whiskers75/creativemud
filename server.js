@@ -5,6 +5,7 @@
 var sockets = [];
 var fs = require('fs');
 var Stream = require('stream');
+var colorize = require('colorize');
 var redis = require('redis');
 var db = redis.createClient(9176, 'koi.redistogo.com'); 
 var players = [];
@@ -118,7 +119,7 @@ var mkPrompt = function(user, callback) {
     // Prompt maker, will edit later
     getAttr(user, 'hp', function(hp) {
         getAttr(user, 'maxHP', function(max) {
-            callback('C:'+hp+'/'+max+'>');
+            callback(colorize.ansify('#cyan['+user+']#red['+hp+']/'+max+'HP>'));
         });
     });
 };
@@ -182,7 +183,6 @@ net.createServer(function (socket) {
         socket.end();
     });
     readlines[sockets.indexOf(socket)].setPrompt('', 0);
-    var colorize = require('colorize');
     fs.readFile('./motd.txt', 'utf8', function(err, data) {
         if (err) {
             console.log('CANNOT READ MOTD!');

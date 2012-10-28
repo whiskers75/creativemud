@@ -261,23 +261,6 @@ net.createServer(function (socket) {
     // players[sockets.indexOf(socket)] = 'none';
     len = len + 1;
     var startREPL = function() {
-        getAttr(players[sockets.indexOf(socket)], 'area', function(area) {
-            getAttr('area_' + area, 'title', function(title) {
-                getAttr('area_' + area, 'desc', function(desc) {
-                    getAttr('area_' + area, 'exits', function(exits) {
-                        socket.write(title + '\n' + desc + '\n' + exits + '\n');
-                            mkPrompt(players[sockets.indexOf(socket)], function(result) {
-                                socket.write(result);
-                            });
-                        }); 
-                    });
-              });
-        });
-        setTimeout(function() {
-            mkPrompt(players[sockets.indexOf(socket)], function(result) {
-                socket.write(result);
-            });
-        }, 1000);
         repl.start({
             prompt: "", // Uses mkprompt() now
             'input': socket,

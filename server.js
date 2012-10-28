@@ -119,7 +119,7 @@ var mkPrompt = function(user, callback) {
     // Prompt maker, will edit later
     getAttr(user, 'hp', function(hp) {
         getAttr(user, 'maxHP', function(max) {
-            callback(colorize.ansify('#cyan['+user+']#red['+hp+']/'+max+'HP>'));
+            callback(colorize.ansify('#green['+user+']:#red['+hp+']/'+max+'HP>'));
         });
     });
 };

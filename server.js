@@ -189,7 +189,9 @@ net.createServer(function (socket) {
             process.exit(1);
         }
         socket.write(colorize.ansify(data));
+        loginPrompt();
     });
+    var loginPrompt = function() {
     readlines[sockets.indexOf(socket)].question('With what name do you go by in the realm of the Creative Multi User Dungeon?\n', function(answer) {
         answer = answer.replace(/[\n\r]/g, '');
         log('Checking '+answer+' for name existence');
@@ -252,6 +254,7 @@ net.createServer(function (socket) {
             });   
         }
     });
+    };
     // DEPRECATED:
     // players[sockets.indexOf(socket)] = 'none';
     len = len + 1;

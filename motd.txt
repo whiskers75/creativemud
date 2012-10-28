@@ -1,20 +1,10 @@
-
-        CCCCCCCCCCCCC                                                                   tttt            iiii                                               MMMMMMMM               MMMMMMMMUUUUUUUU     UUUUUUUUDDDDDDDDDDDDD        
-     CCC::::::::::::C                                                                ttt:::t           i::::i                                              M:::::::M             M:::::::MU::::::U     U::::::UD::::::::::::DDD     
-   CC:::::::::::::::C                                                                t:::::t            iiii                                               M::::::::M           M::::::::MU::::::U     U::::::UD:::::::::::::::DD   
-  C:::::CCCCCCCC::::C                                                                t:::::t                                                               M:::::::::M         M:::::::::MUU:::::U     U:::::UUDDD:::::DDDDD:::::D  
- C:::::C       CCCCCCrrrrr   rrrrrrrrr       eeeeeeeeeeee      aaaaaaaaaaaaa   ttttttt:::::ttttttt    iiiiiii vvvvvvv           vvvvvvv    eeeeeeeeeeee    M::::::::::M       M::::::::::M U:::::U     U:::::U   D:::::D    D:::::D 
-C:::::C              r::::rrr:::::::::r    ee::::::::::::ee    a::::::::::::a  t:::::::::::::::::t    i:::::i  v:::::v         v:::::v   ee::::::::::::ee  M:::::::::::M     M:::::::::::M U:::::D     D:::::U   D:::::D     D:::::D
-C:::::C              r:::::::::::::::::r  e::::::eeeee:::::ee  aaaaaaaaa:::::a t:::::::::::::::::t     i::::i   v:::::v       v:::::v   e::::::eeeee:::::eeM:::::::M::::M   M::::M:::::::M U:::::D     D:::::U   D:::::D     D:::::D
-C:::::C              rr::::::rrrrr::::::re::::::e     e:::::e           a::::a tttttt:::::::tttttt     i::::i    v:::::v     v:::::v   e::::::e     e:::::eM::::::M M::::M M::::M M::::::M U:::::D     D:::::U   D:::::D     D:::::D
-C:::::C               r:::::r     r:::::re:::::::eeeee::::::e    aaaaaaa:::::a       t:::::t           i::::i     v:::::v   v:::::v    e:::::::eeeee::::::eM::::::M  M::::M::::M  M::::::M U:::::D     D:::::U   D:::::D     D:::::D
-C:::::C               r:::::r     rrrrrrre:::::::::::::::::e   aa::::::::::::a       t:::::t           i::::i      v:::::v v:::::v     e:::::::::::::::::e M::::::M   M:::::::M   M::::::M U:::::D     D:::::U   D:::::D     D:::::D
-C:::::C               r:::::r            e::::::eeeeeeeeeee   a::::aaaa::::::a       t:::::t           i::::i       v:::::v:::::v      e::::::eeeeeeeeeee  M::::::M    M:::::M    M::::::M U:::::D     D:::::U   D:::::D     D:::::D
- C:::::C       CCCCCC r:::::r            e:::::::e           a::::a    a:::::a       t:::::t    tttttt i::::i        v:::::::::v       e:::::::e           M::::::M     MMMMM     M::::::M U::::::U   U::::::U   D:::::D    D:::::D 
-  C:::::CCCCCCCC::::C r:::::r            e::::::::e          a::::a    a:::::a       t::::::tttt:::::ti::::::i        v:::::::v        e::::::::e          M::::::M               M::::::M U:::::::UUU:::::::U DDD:::::DDDDD:::::D  
-   CC:::::::::::::::C r:::::r             e::::::::eeeeeeee  a:::::aaaa::::::a       tt::::::::::::::ti::::::i         v:::::v          e::::::::eeeeeeee  M::::::M               M::::::M  UU:::::::::::::UU  D:::::::::::::::DD   
-     CCC::::::::::::C r:::::r              ee:::::::::::::e   a::::::::::aa:::a        tt:::::::::::tti::::::i          v:::v            ee:::::::::::::e  M::::::M               M::::::M    UU:::::::::UU    D::::::::::::DDD     
-        CCCCCCCCCCCCC rrrrrrr                eeeeeeeeeeeeee    aaaaaaaaaa  aaaa          ttttttttttt  iiiiiiii           vvv               eeeeeeeeeeeeee  MMMMMMMM               MMMMMMMM      UUUUUUUUU      DDDDDDDDDDDDD        
+ _____                _   _          ___  ____   _______ 
+/  __ \              | | (_)         |  \/  | | | |  _  \
+| /  \/_ __ ___  __ _| |_ ___   _____| .  . | | | | | | |
+| |   | '__/ _ \/ _` | __| \ \ / / _ \ |\/| | | | | | | |
+| \__/\ | |  __/ (_| | |_| |\ V /  __/ |  | | |_| | |/ / 
+ \____/_|  \___|\__,_|\__|_| \_/ \___\_|  |_/\___/|___/  
 
 #green[Welcome to CreativeMUD, version #red[Beta0.2.]]
-#resetCreated by whiskers75.
+Created by whiskers75.
+ASCII art from #blue[http://bit.ly/UUcxED]

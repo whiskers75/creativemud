@@ -248,9 +248,11 @@ net.createServer(function (socket) {
     // players[sockets.indexOf(socket)] = 'none';
     len = len + 1;
     var startREPL = function() {
-        mkPrompt(players[sockets.indexOf(socket)], function(result) {
-            socket.write(result);
-        });
+        setTimeout(function() {
+            mkPrompt(players[sockets.indexOf(socket)], function(result) {
+                socket.write(result);
+            });
+        }, 1000);
         repl.start({
             prompt: "", // Uses mkprompt() now
             'input': socket,
@@ -277,12 +279,17 @@ net.createServer(function (socket) {
                 //        callback(null, data);
                 //    });
                 //}
-                
-/* TO DO: FIX ME                
+                              
                 if (cmd === "look") {
-                    callback(null, getAreaMetadata(getArea(players[sockets.indexOf(socket)]), 'title') + '\n' + getAreaMetadata(getArea(players[sockets.indexOf(socket)]), 'desc'));
+                    getAttr(sockets.indexOf(socket), 'area',  function(area) {
+                        getAttr('area_'+area, 'title', function(title) {
+                            getAttr('area_'+area, 'desc', function(desc) {
+                                callback(null, title+'\n'+desc);
+                            });
+                        });
+                    });
                 }
-                */
+                
                 /*if (cmd === "save") {
                     callback(null, 'Saves are automatic.');
                 }*/

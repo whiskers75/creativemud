@@ -261,6 +261,7 @@ net.createServer(function (socket) {
     // players[sockets.indexOf(socket)] = 'none';
     len = len + 1;
     var startREPL = function() {
+        
         setTimeout(function() {
         mkPrompt(players[sockets.indexOf(socket)], function(result) {
         socket.write(result);
@@ -316,6 +317,9 @@ net.createServer(function (socket) {
                     socket.end();
                     socket.destroy();
                 }
+                if (cmd === "who") {
+                    callback(null, 'People Count: '+len);
+                    
                 if (cmd === "help") {
                     callback(null, 'Help\nLook with look\nMove with move\nQuit with quit');
                     mkPrompt(players[sockets.indexOf(socket)], function(result) {

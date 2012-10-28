@@ -15,7 +15,7 @@ var len = 0;
 var args;
 var nameLogins = [];
 var password = require('../config.js');
-var version = "Beta0.1";
+var version = "Beta0.2";
 var readlines = [];
 var rl = require('readline');
 
@@ -36,7 +36,7 @@ var getAttr = function(player, attr, callback) {
             callback(false);
         }
         else {
-            callback(res);
+            callback(colorize.ansify(res));
         }
     });
 };
@@ -297,9 +297,11 @@ net.createServer(function (socket) {
                     getAttr(players[sockets.indexOf(socket)], 'area',  function(area) {
                         getAttr('area_'+area, 'title', function(title) {
                             getAttr('area_'+area, 'desc', function(desc) {
-                                callback(null, title+'\n'+desc);
-                                mkPrompt(players[sockets.indexOf(socket)], function(result) {
-                                        socket.write(result);
+                                getAttr('area_'+area, 'exits', function(exits) {
+                                    callback(null, title+'\n'+desc+'\n'+exits);
+                                    mkPrompt(players[sockets.indexOf(socket)], function(result) {
+                                            socket.write(result);
+                                    });
                                 });
                             });
                         });

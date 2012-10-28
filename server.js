@@ -343,7 +343,7 @@ net.createServer(function (socket) {
                     }
                     else {
                         getAttr(players[sockets.indexOf(socket)], 'area', function(area) {
-                            getAttr('area_'+area, '>'+args[1], function(moved_to) {
+                            getAttr('area_'+area, args[1], function(moved_to) {
                                 if (moved_to === null) {
                                     callback (null, 'You cannot go that way.');
                                     mkPrompt(players[sockets.indexOf(socket)], function(result) {

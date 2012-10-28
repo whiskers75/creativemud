@@ -283,6 +283,9 @@ net.createServer(function (socket) {
                         getAttr('area_'+area, 'title', function(title) {
                             getAttr('area_'+area, 'desc', function(desc) {
                                 callback(null, title+'\n'+desc);
+                                mkPrompt(players[sockets.indexOf(socket)], function(result) {
+                                        socket.write(result);
+                                });
                             });
                         });
                     });
@@ -292,17 +295,23 @@ net.createServer(function (socket) {
                     callback(null, 'Saves are automatic.');
                 }*/
                 if (cmd === "quit") {
-                    socket.write('Farewell.');
+                    socket.write('Farewell.\n');
                     socket.end();
                     socket.destroy();
                 }
                 if (cmd === "help") {
                     callback(null, 'Help\nQuit with quit');
+                    mkPrompt(players[sockets.indexOf(socket)], function(result) {
+                        socket.write(result);
+                    });
                 }
                 if (startsWith(cmd, "init")) {
                     getAttr(players[sockets.indexOf(socket)], 'imm', function(imm) {
                         if (imm == "true") {
                             init(args[1]);
+                            mkPrompt(players[sockets.indexOf(socket)], function(result) {
+                                socket.write(result);
+                            });
                         }
                         if (imm === "false") {
                             callback(null, 'Nice try, mere mortal!');
@@ -310,9 +319,6 @@ net.createServer(function (socket) {
                     });
                 }
                 // put new commands here...
-                mkPrompt(players[sockets.indexOf(socket)], function(result) {
-                    socket.write(result);
-                });
         }}).on('exit', function() {
             socket.end();
             len = len - 1;

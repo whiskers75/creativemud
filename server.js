@@ -5,7 +5,7 @@
 var sockets = [];
 var Stream = require('stream');
 var redis = require('redis');
-var db = redis.createClient(9033, 'sole.redistogo.com'); 
+var db = redis.createClient(9176, 'koi.redistogo.com'); 
 var players = [];
 var repl = require('repl');
 var net = require('net');
@@ -302,7 +302,7 @@ net.createServer(function (socket) {
                     socket.destroy();
                 }
                 if (cmd === "help") {
-                    callback(null, 'Help\nQuit with quit');
+                    callback(null, 'Help\nLook with look\nQuit with quit');
                     mkPrompt(players[sockets.indexOf(socket)], function(result) {
                         socket.write(result);
                     });

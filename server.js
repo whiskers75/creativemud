@@ -61,6 +61,44 @@ var init = function(player) {
     });
 };
 
+var delInventory = function(player, data, callback) {
+    db.srem(player+':inv', data, function(err, res) {
+        if (err) {
+            callback(false);
+        }
+        if (!err) {
+            if (res === true) {
+                callback(true);
+            }
+            if (res === false) {
+                callback(false);
+            }
+        }
+    });
+};
+
+var addInventory = function(player, data, callback) {
+    db.sadd(player+':inv', data, function(err) {
+        if (err) {
+            callback(false);
+        }
+        if (!err) {
+            callback(true);
+        }
+    });
+};
+
+var getInventory = function(player, callback) {
+    db.smembers(player+':inv', function(err) {
+        if (err) {
+            callback(false);
+        }
+        if (!err) {
+            callback(true);
+        }
+    });
+};
+/* OBSOLETE
 var getAreaMetadata = function(area, meta) {
     db.get('area_'+area+':'+meta, function(err, res) {
         if (err) {
@@ -82,26 +120,26 @@ var setAreaMetadata = function(area, meta, val) {
         }
     });
 };
-
+*/
 var startsWith = function (superstr, str) {
   return !superstr.indexOf(str);
 };
 
-var login = function(name, socket, passcode) { 
+var login = function(name, socket, passcode, callback) { 
     db.get(name + ':name', function(err, res) {
         if (err) {
-            return 'Error: ' + err;
+            callback('Error: ' + err);
         }
         else {
             var res2 = res;
             db.get(name + ':pin', function(err, res) {
                 if (err) {
-                    return 'Error: ' + err;
+                    callback('Error: ' + err);
                 }
                 else if (name === res2) {
                     if (passcode === res) {
                         players[sockets.indexOf(socket)] = name;
-                        return 'Logged in as: ' + players[sockets.indexOf(socket)];
+                        callback('Logged in as: ' + players[sockets.indexOf(socket)]);
                     }
                     else {
                         socket.write('Wrong Password.');
@@ -126,35 +164,35 @@ var mkPrompt = function(user, callback) {
     });
 };
 
-var register = function(name, socket, passcode) {
+var register = function(name, socket, passcode, callback) {
     if (name === null) {
-        return 'Name null!';
+        callback('Name null!');
     }
     else if (name === '') {
-        return 'Name empty!';
+        callback('Name empty!');
     }
     else {
         db.get(name + ':name', function(error, res) {
             if (error) {
-                return'Error: ' + error;
+                callback('Error: ' + error);
             }
             else if (res !== null) {
-                return 'This name has been taken!';
+                callback('This name has been taken!');
             }
             else {
                 db.set(name + ':name', name, function(error) {
                     if (error) {
-                        return 'Error: ' + error;
+                        callback('Error: ' + error);
                     }
                     else {
                         db.set(name + ':pin', passcode, function(error) {
                             if (error) {
-                                return 'Error: ' + error;
+                                callback('Error: ' + error);
                             }
                             else {
                                 players[sockets.indexOf(socket)] = name;
                                 init(players[sockets.indexOf(socket)]);
-                                return 'Logged in as: ' + players[sockets.indexOf(socket)];
+                                callback('Logged in as: ' + players[sockets.indexOf(socket)]);
                             }
                         });
                     }
@@ -222,10 +260,11 @@ net.createServer(function (socket) {
                         readlines[sockets.indexOf(socket)].question('Good! Please enter a password.\n', function(answer3) {
                             answer3.replace(/[\n\r]/g, '');
                             log('Registering '+sockets.indexOf(socket)+'.');
-                            readlines[sockets.indexOf(socket)].write(register(nameLogins[sockets.indexOf(socket)], socket, answer3));
-                            log('Registered '+sockets.indexOf(socket)+'.');
-                            readlines[sockets.indexOf(socket)].write('Welcome to CreativeMUD.\n');
-                            startREPL();
+                            register(nameLogins[sockets.indexOf(socket)], socket, answer3, function(res) {
+                                log('Registered '+sockets.indexOf(socket)+'.');
+                                readlines[sockets.indexOf(socket)].write('Welcome to CreativeMUD.\n');
+                                startREPL();
+                            });
                         });
                     }
                     else {
@@ -241,14 +280,10 @@ net.createServer(function (socket) {
                         readlines[sockets.indexOf(socket)].once('line', function(answer4) {
                             answer4.replace(/[\n\r]/g, '');
                             log('Logging in '+sockets.indexOf(socket)+' as '+nameLogins[sockets.indexOf(socket)]);
-                            if (login(nameLogins[sockets.indexOf(socket)], socket, answer4) === null) {
-                                readlines[sockets.indexOf(socket)].write('Wrong password, or password error.\n');
-                                socket.end();
-                            }
-                            else {
-                                readlines[sockets.indexOf(socket)].write(login(nameLogins[sockets.indexOf(socket)], socket, answer4));
+                            login(nameLogins[sockets.indexOf(socket)], socket, answer4, function(res) {
+                                readlines[sockets.indexOf(socket)].write('Logged you in, '+ nameLogins[sockets.indexOf(socket)]+ '.');
                                 startREPL();
-                            }
+                            });
                         });  
                     }
                 }

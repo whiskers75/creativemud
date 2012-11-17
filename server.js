@@ -306,7 +306,7 @@ net.createServer(function (socket) {
             'input': socket,
             'output': socket,
             'writer': function(object) {
-                return object;
+                return colorize.ansify(object);
             },
             'eval': function(cmd, context, filename, callback) {
                 cmd = cmd.replace("\n)","").replace("(","");

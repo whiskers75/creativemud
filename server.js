@@ -342,27 +342,34 @@ net.createServer(function (socket) {
                         });
                     });
                 }
-                
-                /*if (cmd === "save") {
+                else {
+                if (cmd === "save") {
                     callback(null, 'Saves are automatic.');
-                }*/
+                    mkPrompt(players[sockets.indexOf(socket)], function(result) {
+                        socket.write(result);
+                    });
+                }
+                else {
                 if (cmd === "quit") {
                     socket.write('Farewell.\n');
                     socket.end();
                     socket.destroy();
                 }
+                else {
                 if (cmd === "who") {
                     callback(null, 'People Count: '+len);
                     mkPrompt(players[sockets.indexOf(socket)], function(result) {
                         socket.write(result);
                     });
                 }
+                else {
                 if (cmd === "help") {
                     callback(null, 'Help\nLook with look\nMove with move\nQuit with quit');
                     mkPrompt(players[sockets.indexOf(socket)], function(result) {
                         socket.write(result);
                     });
                 }
+                else {
                 if (startsWith(cmd, "move")) {
                     if (args[1] === "") {
                         callback(null, 'Usage: move (direction)');
@@ -404,9 +411,9 @@ net.createServer(function (socket) {
                         });
                     }
                     }
-                        
-                if (startsWith(cmd, "init")) {
-                    getAttr(players[sockets.indexOf(socket)], 'imm', function(imm) {
+                    else {
+                        if (startsWith(cmd, "init")) {
+                            getAttr(players[sockets.indexOf(socket)], 'imm', function(imm) {
                         if (imm == "true") {
                             init(args[1]);
                             mkPrompt(players[sockets.indexOf(socket)], function(result) {
@@ -417,6 +424,28 @@ net.createServer(function (socket) {
                             callback(null, 'Nice try, mere mortal!');
                         }
                     });
+                
+                    }
+                    else {
+                    if (cmd !== "") {
+                        callback(null, "Unknown Command.");
+                        mkPrompt(players[sockets.indexOf(socket)], function(result) {
+                            socket.write(result);
+                        });
+                    }
+                    if (cmd === "") {
+                        callback(null, "");
+                        mkPrompt(players[sockets.indexOf(socket)], function(result) {
+                            socket.write(result);
+                        });
+                    }
+                    
+                    }
+                    }
+                }
+                }
+                }
+                }
                 }
                 // put new commands here...
         }}).on('exit', function() {

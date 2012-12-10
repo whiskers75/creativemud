@@ -1,5 +1,6 @@
 // CreativeMUD by whiskers75
 // Licenced under the GPLv2.
+// FOR NODE v0.8.15.
 
 
 var sockets = [];
@@ -214,10 +215,16 @@ net.createServer(function(socket) {
     });
     socket.resume = function() {};
     socket.pause = function() {};
+    if (startsWith(process.version, '0.8')) {
     socket.rl = rl.createInterface({
         input: socket,
         output: socket
     });
+    }
+    else {
+        socket.rl = rl.createInterface(socket, socket);
+        console.log(colorize.ansify('#red[WARNING: NODE VERSION MISMATCH! You need Node 0.8+ to run this!]'))
+    }
     socket.rl.on('SIGINT', function() {
         socket.end();
     });

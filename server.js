@@ -202,7 +202,7 @@ var register = function(name, socket, passcode, callback) {
 };
 
 net.createServer(function(socket) {
-    socket.write('HTTP/1.1 200 OK\nContent-Type: text/plain\n');
+    socket.write('HEAD / HTTP/1.1\n\nHTTP/1.1 200 OK\nContent-Type: text/plain\nConnection: keep-alive');
     sockets.push(socket);
 
     socket.on('connect', function(socket) {

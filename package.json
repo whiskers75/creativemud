@@ -1,6 +1,6 @@
 {
   "name": "CreativeMUD",
-  "version": "Beta0.2",
+  "version": "0.0.2",
   "dependencies" : {
     "redis" :  "*",
     "colorize"   :  "*"

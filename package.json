@@ -1,0 +1,12 @@
+{
+  "name": "CreativeMUD",
+  "version": "Beta0.2",
+  "dependencies" : {
+    "redis" :  "*",
+    "colorize"   :  "*"
+  },
+  "license": "GPL",
+  "engines": {
+    "node": "0.6"
+  }
+}

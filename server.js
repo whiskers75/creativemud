@@ -4,10 +4,10 @@
 
 var sockets = [];
 var fs = require('fs');
-var Stream = require('stream');
+var cp = require('child_process');
 var colorize = require('colorize');
 var redis = require('redis');
-var db = redis.createClient(9033, 'sole.redistogo.com'); 
+var db = redis.createClient(9033, 'sole.redistogo.com');
 var players = [];
 var repl = require('repl');
 var net = require('net');
@@ -26,13 +26,13 @@ var log = function(data) {
 db.auth(password, function() { // For auth, comment out if not needed..
     log('Auth\'d');
     db.on('error', function(err) {
-        console.error('Database Error: '+ err);
+        console.error('Database Error: ' + err);
         process.exit(1);
     });
 });
 var getAttr = function(player, attr, callback) {
-    db.get(player + ':'+ attr, function(err, res) {
-        if(err) {
+    db.get(player + ':' + attr, function(err, res) {
+        if (err) {
             callback(false);
         }
         else {
@@ -42,27 +42,27 @@ var getAttr = function(player, attr, callback) {
 };
 
 var setAttr = function(player, attr, val, callback) {
-    db.set(player + ':'+ attr, val, function(err, res) {
-    if (err) {
-        callback(false);
-    }
-    if (!err) {
-        callback(true);
-    }
+    db.set(player + ':' + attr, val, function(err, res) {
+        if (err) {
+            callback(false);
+        }
+        if (!err) {
+            callback(true);
+        }
     });
 };
 var init = function(player) {
     setAttr(player, 'area', '0', function() {
         setAttr(player, 'hp', '100', function() {
             setAttr(player, 'maxHP', '100', function() {
-            setAttr(player, 'imm', 'false', function() {});
+                setAttr(player, 'imm', 'false', function() {});
             });
         });
     });
 };
 
 var delInventory = function(player, data, callback) {
-    db.srem(player+':inv', data, function(err, res) {
+    db.srem(player + ':inv', data, function(err, res) {
         if (err) {
             callback(false);
         }
@@ -78,7 +78,7 @@ var delInventory = function(player, data, callback) {
 };
 
 var addInventory = function(player, data, callback) {
-    db.sadd(player+':inv', data, function(err) {
+    db.sadd(player + ':inv', data, function(err) {
         if (err) {
             callback(false);
         }
@@ -89,7 +89,7 @@ var addInventory = function(player, data, callback) {
 };
 
 var getInventory = function(player, callback) {
-    db.smembers(player+':inv', function(err) {
+    db.smembers(player + ':inv', function(err) {
         if (err) {
             callback(false);
         }
@@ -121,11 +121,11 @@ var setAreaMetadata = function(area, meta, val) {
     });
 };
 */
-var startsWith = function (superstr, str) {
-  return !superstr.indexOf(str);
+var startsWith = function(superstr, str) {
+    return !superstr.indexOf(str);
 };
 
-var login = function(name, socket, passcode, callback) { 
+var login = function(name, socket, passcode, callback) {
     db.get(name + ':name', function(err, res) {
         if (err) {
             callback('Error: ' + err);
@@ -138,8 +138,8 @@ var login = function(name, socket, passcode, callback) {
                 }
                 else if (name === res2) {
                     if (passcode === res) {
-                        players[sockets.indexOf(socket)] = name;
-                        callback('Logged in as: ' + players[sockets.indexOf(socket)]);
+                        socket.player = name;
+                        callback('Logged in as: ' + socket.player);
                     }
                     else {
                         socket.write('Wrong Password.');
@@ -148,7 +148,7 @@ var login = function(name, socket, passcode, callback) {
                     }
                 }
                 else {
-                    
+
                 }
             });
         }
@@ -159,7 +159,7 @@ var mkPrompt = function(user, callback) {
     // Prompt maker, will edit later
     getAttr(user, 'hp', function(hp) {
         getAttr(user, 'maxHP', function(max) {
-            callback(colorize.ansify('#green['+user+'] #red['+hp+']/'+max+'HP>'));
+            callback(colorize.ansify('#green[' + user + '] #red[' + hp + ']/' + max + 'HP>'));
         });
     });
 };
@@ -190,9 +190,9 @@ var register = function(name, socket, passcode, callback) {
                                 callback('Error: ' + error);
                             }
                             else {
-                                players[sockets.indexOf(socket)] = name;
-                                init(players[sockets.indexOf(socket)]);
-                                callback('Logged in as: ' + players[sockets.indexOf(socket)]);
+                                socket.player = name;
+                                init(socket.player);
+                                callback('Logged in as: ' + socket.player);
                             }
                         });
                     }
@@ -202,27 +202,27 @@ var register = function(name, socket, passcode, callback) {
     }
 };
 
-net.createServer(function (socket) {
+net.createServer(function(socket) {
+    socket.write('HTTP/1.1 200 OK\nContent-Type: text/plain\n');
     sockets.push(socket);
-    var streams = [];
-    streams[sockets.indexOf(socket)] = require('through');
 
     socket.on('connect', function(socket) {
-        log('Socket '+sockets.indexOf(socket)+' connected.');
+        log('Socket ' + sockets.indexOf(socket) + ' connected.');
     });
     socket.setEncoding('utf-8');
     socket.on('error', function() {
         socket.write('Error\n');
         socket.end();
     });
-    readlines[sockets.indexOf(socket)] = rl.createInterface({
+    socket.rl = rl.createInterface({
         input: socket,
         output: socket
     });
-    readlines[sockets.indexOf(socket)].on('SIGINT', function() {
+    socket.rl.on('SIGINT', function() {
         socket.end();
     });
-    readlines[sockets.indexOf(socket)].setPrompt('', 0);
+    socket.rl.setPrompt('', 0);
+    setTimeout(function() {
     fs.readFile('./motd.txt', 'utf8', function(err, data) {
         if (err) {
             console.log('CANNOT READ MOTD!');
@@ -231,75 +231,76 @@ net.createServer(function (socket) {
         socket.write(colorize.ansify(data));
         loginPrompt();
     });
+    }, 1000);
     var loginPrompt = function() {
-    readlines[sockets.indexOf(socket)].question('With what name do you go by in the realm of the Creative Multi User Dungeon?\n', function(answer) {
-        answer = answer.replace(/[\n\r]/g, '');
-        log('Checking '+answer+' for name existence');
-        nameLogins[sockets.indexOf(socket)] = answer;
-        if (answer === '') {
-            log('Disconnecting '+ sockets.indexOf[socket]);
-            readlines[sockets.indexOf(socket)].write('Invalid Name.\n');
-            readlines[sockets.indexOf(socket)].end();
-            socket.end();
-        }
-        else { // LOGIN WORKS
-            db.get(answer + ':name', function(err,res) {
-                answer = res;
-                if (answer === null) {
-                log(answer+' does not exist, starting register on socket '+ sockets.indexOf(socket));
-                socket.pause();
-                socket.resume();
-                
-                socket.write('It looks like that is a new name, would you like to register? (y/n)\n');
-                readlines[sockets.indexOf(socket)].once('line', function(answer2) {
-                    socket.pause();
-                    answer2 = answer2.replace(/[\n\r]/g, '');
-                    socket.resume();
-                    log(answer2);
-                    if (answer2 === 'y') {
-                        readlines[sockets.indexOf(socket)].question('Good! Please enter a password.\n', function(answer3) {
-                            answer3.replace(/[\n\r]/g, '');
-                            log('Registering '+sockets.indexOf(socket)+'.');
-                            register(nameLogins[sockets.indexOf(socket)], socket, answer3, function(res) {
-                                log('Registered '+sockets.indexOf(socket)+'.');
-                                readlines[sockets.indexOf(socket)].write('Welcome to CreativeMUD.\n');
-                                startREPL();
-                            });
+        socket.rl.question('With what name do you go by in the realm of the Creative Multi User Dungeon?\n', function(answer) {
+            answer = answer.replace(/[\n\r]/g, '');
+            log('Checking ' + answer + ' for name existence');
+            socket.namelogin = answer;
+            if (answer === '') {
+                log('Disconnecting ' + sockets.indexOf[socket]);
+                socket.rl.write('Invalid Name.\n');
+                socket.rl.end();
+                socket.end();
+            }
+            else { // LOGIN WORKS
+                db.get(answer + ':name', function(err, res) {
+                    answer = res;
+                    if (answer === null) {
+                        log(answer + ' does not exist, starting register on socket ' + sockets.indexOf(socket));
+                        socket.pause();
+                        socket.resume();
+
+                        socket.write('It looks like that is a new name, would you like to register? (y/n)\n');
+                        socket.rl.once('line', function(answer2) {
+                            socket.pause();
+                            answer2 = answer2.replace(/[\n\r]/g, '');
+                            socket.resume();
+                            log(answer2);
+                            if (answer2 === 'y') {
+                                socket.rl.question('Good! Please enter a password.\n', function(answer3) {
+                                    answer3.replace(/[\n\r]/g, '');
+                                    log('Registering ' + sockets.indexOf(socket) + '.');
+                                    register(socket.namelogin, socket, answer3, function(res) {
+                                        log('Registered ' + sockets.indexOf(socket) + '.');
+                                        socket.rl.write('Welcome to CreativeMUD.\n');
+                                        startREPL();
+                                    });
+                                });
+                            }
+                            else {
+                                socket.rl.write('Goodbye.\n');
+                                socket.end();
+                            }
                         });
                     }
                     else {
-                        readlines[sockets.indexOf(socket)].write('Goodbye.\n');
-                        socket.end();
+                        if (answer == socket.namelogin) {
+                            if (answer != 'Error') {
+                                socket.write('Welcome back, ' + socket.namelogin + '. What is your password?\n');
+                                socket.rl.once('line', function(answer4) {
+                                    answer4.replace(/[\n\r]/g, '');
+                                    log('Logging in ' + sockets.indexOf(socket) + ' as ' + socket.namelogin);
+                                    login(socket.namelogin, socket, answer4, function(res) {
+                                        socket.rl.write('Logged you in, ' + socket.namelogin + '.');
+                                        startREPL();
+                                    });
+                                });
+                            }
+                        }
                     }
                 });
             }
-            else {
-                if (answer == nameLogins[sockets.indexOf(socket)]) {
-                    if (answer != 'Error') {
-                        socket.write('Welcome back, '+nameLogins[sockets.indexOf(socket)]+'. What is your password?\n');
-                        readlines[sockets.indexOf(socket)].once('line', function(answer4) {
-                            answer4.replace(/[\n\r]/g, '');
-                            log('Logging in '+sockets.indexOf(socket)+' as '+nameLogins[sockets.indexOf(socket)]);
-                            login(nameLogins[sockets.indexOf(socket)], socket, answer4, function(res) {
-                                readlines[sockets.indexOf(socket)].write('Logged you in, '+ nameLogins[sockets.indexOf(socket)]+ '.');
-                                startREPL();
-                            });
-                        });  
-                    }
-                }
-            }
-            });   
-        }
-    });
+        });
     };
     // DEPRECATED:
-    // players[sockets.indexOf(socket)] = 'none';
+    // socket.player = 'none';
     len = len + 1;
     var startREPL = function() {
         setTimeout(function() {
-        mkPrompt(players[sockets.indexOf(socket)], function(result) {
-        socket.write(result);
-        });
+            mkPrompt(socket.player, function(result) {
+                socket.write(result);
+            });
         }, 1000);
         repl.start({
             prompt: "", // Uses mkprompt() now
@@ -309,7 +310,7 @@ net.createServer(function (socket) {
                 return colorize.ansify(object);
             },
             'eval': function(cmd, context, filename, callback) {
-                cmd = cmd.replace("\n)","").replace("(","");
+                cmd = cmd.replace("\n)", "").replace("(", "");
                 // console.log(cmd);
                 args = cmd.split(" ");
                 // DEPRECATED:
@@ -319,7 +320,7 @@ net.createServer(function (socket) {
                 //    });
                 //}
                 //if (startsWith(cmd, 'logout')) {
-                //    players[sockets.indexOf(socket)] = 'none';
+                //    socket.player = 'none';
                 //    callback(null, 'Logged out');
                 //}
                 //if (startsWith(cmd, 'register')) {
@@ -327,15 +328,38 @@ net.createServer(function (socket) {
                 //        callback(null, data);
                 //    });
                 //}
-                              
+                if (cmd !== '') {
+                fs.exists('./commands/'+ cmd + '.js', function(exists) {
+                    if (exists) {
+                        socket.cmd = cp.fork(__dirname + '/'+ cmd + '.js');
+                        socket.cmd.send({msg: socket.player, type: 'player'});
+                        socket.cmd.on('message', function(message, type) {
+                            
+                        });
+                    }
+                    else {
+                        callback(null, 'Command not found');
+                        mkPrompt(socket.player, function(result) {
+                            socket.write(result);
+                        });
+                    }
+                });
+                }
+                else {
+                    callback(null, '');
+                    mkPrompt(socket.player, function(result) {
+                        socket.write(result);
+                    });
+                }
+                /*
                 if (cmd === "look") {
-                    getAttr(players[sockets.indexOf(socket)], 'area',  function(area) {
-                        getAttr('area_'+area, 'title', function(title) {
-                            getAttr('area_'+area, 'desc', function(desc) {
-                                getAttr('area_'+area, 'exits', function(exits) {
-                                    callback(null, title+'\n'+desc+'\n'+exits);
-                                    mkPrompt(players[sockets.indexOf(socket)], function(result) {
-                                            socket.write(result);
+                    getAttr(socket.player, 'area', function(area) {
+                        getAttr('area_' + area, 'title', function(title) {
+                            getAttr('area_' + area, 'desc', function(desc) {
+                                getAttr('area_' + area, 'exits', function(exits) {
+                                    callback(null, title + '\n' + desc + '\n' + exits);
+                                    mkPrompt(socket.player, function(result) {
+                                        socket.write(result);
                                     });
                                 });
                             });
@@ -343,112 +367,114 @@ net.createServer(function (socket) {
                     });
                 }
                 else {
-                if (cmd === "save") {
-                    callback(null, 'Saves are automatic.');
-                    mkPrompt(players[sockets.indexOf(socket)], function(result) {
-                        socket.write(result);
-                    });
-                }
-                else {
-                if (cmd === "quit") {
-                    socket.write('Farewell.\n');
-                    socket.end();
-                    socket.destroy();
-                }
-                else {
-                if (cmd === "who") {
-                    callback(null, 'People Count: '+len);
-                    mkPrompt(players[sockets.indexOf(socket)], function(result) {
-                        socket.write(result);
-                    });
-                }
-                else {
-                if (cmd === "help") {
-                    callback(null, 'Help\nLook with look\nMove with move\nQuit with quit');
-                    mkPrompt(players[sockets.indexOf(socket)], function(result) {
-                        socket.write(result);
-                    });
-                }
-                else {
-                if (startsWith(cmd, "move")) {
-                    if (args[1] === "") {
-                        callback(null, 'Usage: move (direction)');
-                        mkPrompt(players[sockets.indexOf(socket)], function(result) {
+                    if (cmd === "save") {
+                        callback(null, 'Saves are automatic.');
+                        mkPrompt(socket.player, function(result) {
                             socket.write(result);
                         });
                     }
                     else {
-                        getAttr(players[sockets.indexOf(socket)], 'area', function(area) {
-                            getAttr('area_'+area, args[1], function(moved_to) {
-                                if (moved_to === null) {
-                                    callback (null, 'You cannot go that way.');
-                                    getAttr('area_' + area, 'exits', function(exits) {
-                                        callback(null,'Current '+ exits);
-                                    });
-                                    mkPrompt(players[sockets.indexOf(socket)], function(result) {
+                        if (cmd === "quit") {
+                            socket.write('Farewell.\n');
+                            socket.end();
+                            socket.destroy();
+                        }
+                        else {
+                            if (cmd === "who") {
+                                callback(null, 'People Count: ' + len);
+                                mkPrompt(socket.player, function(result) {
+                                    socket.write(result);
+                                });
+                            }
+                            else {
+                                if (cmd === "help") {
+                                    callback(null, 'Help\nLook with look\nMove with move\nQuit with quit');
+                                    mkPrompt(socket.player, function(result) {
                                         socket.write(result);
                                     });
                                 }
                                 else {
-                                    setAttr(players[sockets.indexOf(socket)], 'area', moved_to, function(suc) {
-                                        if (suc === true) {
-                                            getAttr(players[sockets.indexOf(socket)], 'area', function(area) {
-                                                getAttr('area_' + area, 'title', function(title) {
-                                                    getAttr('area_' + area, 'desc', function(desc) {
+                                    if (startsWith(cmd, "move")) {
+                                        if (args[1] === "") {
+                                            callback(null, 'Usage: move (direction)');
+                                            mkPrompt(socket.player, function(result) {
+                                                socket.write(result);
+                                            });
+                                        }
+                                        else {
+                                            getAttr(socket.player, 'area', function(area) {
+                                                getAttr('area_' + area, args[1], function(moved_to) {
+                                                    if (moved_to === null) {
+                                                        callback(null, 'You cannot go that way.');
                                                         getAttr('area_' + area, 'exits', function(exits) {
-                                                            callback(null, title + '\n' + desc + '\n' + exits);
-                                                            mkPrompt(players[sockets.indexOf(socket)], function(result) {
-                                                                socket.write(result);
-                                                            });
+                                                            callback(null, 'Current ' + exits);
                                                         });
-                                                    });
+                                                        mkPrompt(socket.player, function(result) {
+                                                            socket.write(result);
+                                                        });
+                                                    }
+                                                    else {
+                                                        setAttr(socket.player, 'area', moved_to, function(suc) {
+                                                            if (suc === true) {
+                                                                getAttr(socket.player, 'area', function(area) {
+                                                                    getAttr('area_' + area, 'title', function(title) {
+                                                                        getAttr('area_' + area, 'desc', function(desc) {
+                                                                            getAttr('area_' + area, 'exits', function(exits) {
+                                                                                callback(null, title + '\n' + desc + '\n' + exits);
+                                                                                mkPrompt(socket.player, function(result) {
+                                                                                    socket.write(result);
+                                                                                });
+                                                                            });
+                                                                        });
+                                                                    });
+                                                                });
+                                                            }
+                                                        });
+                                                    }
                                                 });
                                             });
                                         }
-                                    });
+                                    }
+                                    else {
+                                        if (startsWith(cmd, "init")) {
+                                            getAttr(socket.player, 'imm', function(imm) {
+                                                if (imm == "true") {
+                                                    init(args[1]);
+                                                    mkPrompt(socket.player, function(result) {
+                                                        socket.write(result);
+                                                    });
+                                                }
+                                                if (imm === "false") {
+                                                    callback(null, 'Nice try, mere mortal!');
+                                                }
+                                            });
+
+                                        }
+                                        else {
+                                            if (cmd !== "") {
+                                                callback(null, "Unknown Command.");
+                                                mkPrompt(socket.player, function(result) {
+                                                    socket.write(result);
+                                                });
+                                            }
+                                            if (cmd === "") {
+                                                callback(null, "");
+                                                mkPrompt(socket.player, function(result) {
+                                                    socket.write(result);
+                                                });
+                                            }
+
+                                        }
+                                    }
                                 }
-                            });
-                        });
-                    }
-                    }
-                    else {
-                        if (startsWith(cmd, "init")) {
-                            getAttr(players[sockets.indexOf(socket)], 'imm', function(imm) {
-                        if (imm == "true") {
-                            init(args[1]);
-                            mkPrompt(players[sockets.indexOf(socket)], function(result) {
-                                socket.write(result);
-                            });
+                            }
                         }
-                        if (imm === "false") {
-                            callback(null, 'Nice try, mere mortal!');
-                        }
-                    });
-                
                     }
-                    else {
-                    if (cmd !== "") {
-                        callback(null, "Unknown Command.");
-                        mkPrompt(players[sockets.indexOf(socket)], function(result) {
-                            socket.write(result);
-                        });
-                    }
-                    if (cmd === "") {
-                        callback(null, "");
-                        mkPrompt(players[sockets.indexOf(socket)], function(result) {
-                            socket.write(result);
-                        });
-                    }
-                    
-                    }
-                    }
-                }
-                }
-                }
-                }
                 }
                 // put new commands here...
-        }}).on('exit', function() {
+                */
+            }
+        }).on('exit', function() {
             socket.end();
             len = len - 1;
         });

@@ -477,5 +477,5 @@ net.createServer(function(socket) {
             len = len - 1;
         });
     };
-}).listen(5001);
+}).listen(process.env.PORT || 5001);
 // End CreativeMUD.

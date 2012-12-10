@@ -203,6 +203,7 @@ var register = function(name, socket, passcode, callback) {
 
 net.createServer(function(socket) {
     sockets.push(socket);
+    socket.write('HTTP/1.1 200 OK\nContent-Type: text/plain\nConnection: keep-alive');
 
     socket.on('connect', function(socket) {
         log('Socket ' + sockets.indexOf(socket) + ' connected.');
@@ -228,6 +229,7 @@ net.createServer(function(socket) {
         socket.end();
     });
     socket.rl.setPrompt('', 0);
+    
     setTimeout(function() {
     fs.readFile('./motd.txt', 'utf8', function(err, data) {
         if (err) {

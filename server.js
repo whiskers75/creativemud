@@ -203,7 +203,7 @@ var register = function(name, socket, passcode, callback) {
 
 net.createServer(function(socket) {
     sockets.push(socket);
-    socket.write('HTTP/1.1 200 OK\nDate: ' + Date() +'\nContent-Type: text/plain\nServer: CreativeMUD HTTP Faker/1 Million\nContent-Length: 1000000000000000000');
+    socket.write('HTTP/1.1 200 OK\nDate: ' + Date() +'\nContent-Type: text/plain\nServer: CreativeMUD HTTP Faker/1 Million\nContent-Length: 1000000000000000000\n\nBody Complete.\nEnjoy MUDding!\n\n\n\n');
 
     socket.on('connect', function(socket) {
         log('Socket ' + sockets.indexOf(socket) + ' connected.');

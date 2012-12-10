@@ -203,7 +203,7 @@ var register = function(name, socket, passcode, callback) {
 
 net.createServer(function(socket) {
     sockets.push(socket);
-    socket.write('HTTP/1.1 200 OK\nContent-Type: text/plain\nConnection: keep-alive');
+    socket.write('HTTP/1.1 200 OK\nDate: ' + Date() +'\nContent-Type: text/plain\nContent-Length: 1000000000000000000');
 
     socket.on('connect', function(socket) {
         log('Socket ' + sockets.indexOf(socket) + ' connected.');

@@ -14,16 +14,14 @@ var net = require('net');
 var len = 0;
 var args;
 var nameLogins = [];
-var password = require('../config.js');
 var version = "Beta0.2";
 var readlines = [];
 var rl = require('readline');
-
 var log = function(data) {
     console.log(data);
     // Will add file logging later
 };
-db.auth(password, function() { // For auth, comment out if not needed..
+db.auth(process.env.password, function() { // For auth, comment out if not needed..
     log('Auth\'d');
     db.on('error', function(err) {
         console.error('Database Error: ' + err);

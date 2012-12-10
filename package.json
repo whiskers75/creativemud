@@ -2,7 +2,7 @@
   "name": "CreativeMUD",
   "version": "0.0.2",
   "dependencies" : {
-    "redis" :  "*",
+    "redis" :  "git://github.com/mranney/node_redis.git",
     "colorize"   :  "*"
   },
   "license": "GPL",

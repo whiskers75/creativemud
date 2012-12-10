@@ -212,6 +212,8 @@ net.createServer(function(socket) {
         socket.write('Error\n');
         socket.end();
     });
+    socket.resume = function() {};
+    socket.pause = function() {};
     socket.rl = rl.createInterface({
         input: socket,
         output: socket
